@@ -1,0 +1,27 @@
+{
+  "name": "avaa_workshops_pipeline",
+  "version": "1.0.0",
+  "description": "A pipeline for create and monitoring all workshops created for the scolarships holder in the Pro-Excelencia program",
+  "main": "main.gs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mustafinho/avaaWorkshopsPipeline.git"
+  },
+  "keywords": [
+    "pipeline",
+    "appscript",
+    "typescript"
+  ],
+  "author": "Kevin Bravo @kevbto",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mustafinho/avaaWorkshopsPipeline/issues"
+  },
+  "homepage": "https://github.com/mustafinho/avaaWorkshopsPipeline#readme",
+  "dependencies": {
+    "@types/google-apps-script": "1.0.45"
+  }
+}
