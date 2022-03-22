@@ -1,31 +1,81 @@
 const SPREADSHEET_ID = "1qUy-dHm7IOU8VykaR2gRDn-sZwnMfh7Rqj_ktaKIcRg"; // The ID of the master sheet in where all workshops details are visualized
 
 // --------------------------------------------- constants variables ---------------------------------------------
-const SHEET_NAME = 'Sheet1'; // the name of the {sheet} in the specified spreadsheet
-const START_COLUMN = 'A' // the column in where the range start for looking data
-const END_COLUMN = 'L' // the column in where the range end for looking data
-const SCRIPT_PROPERTIES_WORKSHOPS_KEY = 'CURRENT_WORKSHOPS' // the key for storing the scheduled workshop details using the "PropertiesServices"
+
+const SHEET_NAME: string = 'Sheet1'; // the name of the {sheet} in the specified spreadsheet
+
+/**
+ * The start column from where we search for the workshops data
+ * @type {String}
+ */
+const START_COLUMN: string = 'A'
+
+
+/**
+ * The end  column from where we search for the workshops data
+ * @type {String}
+ */
+const END_COLUMN: string = 'L'
+
+/**
+ * the key for storing the scheduled workshop details using {@linkcode scriptProperties}
+ * @type
+ */
+const SCRIPT_PROPERTIES_WORKSHOPS_KEY: string = 'CURRENT_WORKSHOPS'
 
 const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID); // the actual spreadsheet object
 const sheet = spreadsheet.getSheets()[1]; //the sheet from where we grab all the data
 
 /**
- * script property service class
- * @type {Properties}
+ * script property service object
+ * @type {GoogleAppsScript.Properties.Properties}
  * @see https://developers.google.com/apps-script/guides/properties
  */
-const scriptProperties = PropertiesService.getScriptProperties();
+const scriptProperties: GoogleAppsScript.Properties.Properties = PropertiesService.getScriptProperties();
 
 
-const resetAllScriptPropertiesValues = () =>{
+const resetAllScriptPropertiesValues = () => {
   scriptProperties.deleteAllProperties();
 }
 
-const isBlank = (currentValue) => currentValue[0] !== ''
+const isBlank = (currentValue: any): boolean => currentValue[0] !== ''
+
+enum Pensum{
+  'padfads',
+  adfasdf,
+}
 
 // --------------------------------------------- class/schema for storing workshops details ---------------------------------------------
+
 class Workshop {
-  constructor(id, name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description, sendType) {
+  id: number;
+  name: string;
+  pensum: Pensum;
+  date: string;
+  startHour: string;
+  endHour: string;
+  speaker: string
+  numberOfParticipants: number;
+  kindOfWorkshop: string;
+  platform: string
+  description: string
+  sendType: string;
+
+  constructor(
+    id: number,
+    name: string,
+    pensum: Pensum,
+    date: string,
+    startHour: string,
+    endHour: string,
+    speaker: string,
+    numberOfParticipants: number,
+    kindOfWorkshop: string,
+    platform: string,
+    description: string,
+    sendType: string
+    ) {
+
     this.id = id;
     this.name = name;
     this.pensum = pensum;
@@ -41,12 +91,14 @@ class Workshop {
   }
 }
 // --------------------------------------------- helper functions ---------------------------------------------
+
+
 /**
  * Grab the information from a specifed range of cell
- * @returns {Array} an array of all the values grabbed
+ * @returns  an array of all the values grabbed
  * @see https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get
  */
-const getWorkshopsDetails = () => {
+const getWorkshopsDetails = (): any[][] | undefined => {
   const [pointOfStart, pointOfEnd] = getCurrentRange();
   const rangeName = `${SHEET_NAME}!${START_COLUMN}${pointOfStart}:${END_COLUMN}${pointOfEnd}`
   try {
@@ -70,15 +122,17 @@ const getWorkshopsDetails = () => {
  * Set the actual range from where we grab the data using {getWorkshopsDetails} 
  * @returns {Array<Number>} an array with the start and end point
  */
-const getCurrentRange = () => {
+const getCurrentRange = (): [number, number] => {
   const namedRanges = spreadsheet.getNamedRanges()
-  const namedRange = namedRanges.filter(word => word.getName() === 'current_workshops')
+  const namedRange = namedRanges.filter((word: GoogleAppsScript.Spreadsheet.NamedRange) => word.getName() === 'current_workshops')
   const pointOfStart = namedRange[0].getRange().getLastRow()
   const pointOfEnd = sheet.getLastRow()
   return [pointOfStart, pointOfEnd]
 }
-
-const updateSheetRange = () => {
+/**
+ * 
+ */
+const updateSheetRange = (): void => {
   const [pointOfStart, pointOfEnd] = getCurrentRange();
   const range = `${SHEET_NAME}!${START_COLUMN}${pointOfStart}:${END_COLUMN}${pointOfEnd}`
   const namedRanges = spreadsheet.getNamedRanges();
@@ -88,11 +142,11 @@ const updateSheetRange = () => {
 
 /**
  * stores the scheduled workshops to send that information later
- * @param {JSON<Workshop>}
- * @param {String}
+ * @param values - a list of workshops
+ * @param scriptPropertiesKey -  the script property key in where all the data would be stored
  * @see https://developers.google.com/apps-script/reference/properties/properties#setProperty(String,String)
  */
-const storeValues = (values, scriptPropertiesKey) => {
+const storeValues = (values: any[], scriptPropertiesKey: string) => {
   const processedData = processData(values);
   const dataObject = Object.assign({}, processedData)
   const jsonData = JSON.stringify(dataObject)
@@ -104,23 +158,25 @@ const storeValues = (values, scriptPropertiesKey) => {
  * @param {Array}
  * @returns {Array<Workshop>} 
  */
-const processData = (values) => {
-  const workshops = [];
+const processData = (values: any[]) => {
+  const workshops: Workshop[] = [];
   values.forEach(value => {
     workshops.push(new Workshop(...value))
   })
   return workshops;
 }
 
+
 /**
- * Determine if the workshop needs to be scheduled or not
- * @param {Array<Workshop>}
- * @returns {Array<Workshop>} 
- * @returns {Array<Workshop>} 
+ * Determine if a workshop should be scheduled or not based on its type 
+ * @param processedWorkshopData - 
+ * @type Workshop[]
+ * @returns 
  */
-const processWorkshopType = (processedWorkshopData) => {
-  const scheduledWOrkshops = [];
-  const workshopsToSendASAP = []
+const processWorkshopType = (processedWorkshopData: Workshop[]): [Workshop[], Workshop[]] => {
+  const scheduledWOrkshops: Workshop[] = [];
+  const workshopsToSendASAP: Workshop[] = []
+
   processedWorkshopData.forEach(workshop => {
     if (workshop.sendType === "ASAP") {
       workshopsToSendASAP.push(workshop)
@@ -130,6 +186,5 @@ const processWorkshopType = (processedWorkshopData) => {
     }
   })
   return [scheduledWOrkshops, workshopsToSendASAP];
-
 
 }

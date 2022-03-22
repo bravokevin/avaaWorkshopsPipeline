@@ -38,7 +38,7 @@ const spreadSheetMain = () => {
 
     })
       sendEmails(workshopsToSendASAPFinalDataArr, "Prueba - Invitacion a talleres de la semana tal a tal");
-      // telegramMain(workshopsToSendASAPFinalDataArr)
+      // telegramMain(workshopsToSendASAPFinalDataArr) (quitar esta linea de codigo)
   }
   //se update el rango d ela verga esta
   // updateSheetRange()
@@ -50,10 +50,6 @@ const calendarMain = (values) => {
   const addUrl = getPublicEventLink(eventId);
   return [meetLink, addUrl]
 }
-
-
-
-
 
 const sendScheduledWorkshops = () =>{
   const workshopsData = scriptProperties.get(SCRIPT_PROPERTIES_WORKSHOPS_KEY)
