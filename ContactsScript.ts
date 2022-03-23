@@ -4,6 +4,7 @@
  * @returns  an array of email addresses of all the contacts in the specified group
  */
 const getContacts = (groupName: string): string[] => {
+
   const contactGroup = ContactsApp.getContactGroup(groupName)
   const contactsRaw = contactGroup.getContacts();
   const contacts: string[] = []
