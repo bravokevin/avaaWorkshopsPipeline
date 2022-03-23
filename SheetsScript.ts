@@ -208,11 +208,11 @@ const processData = (values: any[][]): Workshop[] => {
  * @param WorkshopData - an array of the class Workshop
  * @returns  a tupple of the workshops that have to be scheduled and workshops that we can send ASAP
  */
-const processWorkshopType = (WorkshopData: Workshop[]): [Workshop[], Workshop[]] => {
+const processWorkshopType = (workshopData: Workshop[]): [Workshop[], Workshop[]] => {
   const scheduledWOrkshops: Workshop[] = [];
   const workshopsToSendASAP: Workshop[] = []
 
-  WorkshopData.forEach(workshop => {
+  workshopData.forEach(workshop => {
     if (workshop.sendType === "ASAP") {
       workshopsToSendASAP.push(workshop)
     }
