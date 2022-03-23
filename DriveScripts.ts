@@ -7,7 +7,14 @@ const FORMS_FOLDER_ID = '1f9kU7oennj_xqxiUWfjr9qQnNa7LnzUg'
  */
 const TEMPLATE_WORKSHOP_FORM_ID = '1bf2gMyAbF7BtwIQ6Dkhft8QcM9CHSR_vMfEYEL7DqhM'
 
+/**
+ * The id in where all the copy of the template form are going to be
+ */
 const FORM_SUBFOLDER_FOR_WORKSHOPS = '1FsiVC5_OrdbetPoIBF2t_yockytiDoe_'
+
+/**
+ * The id in where all the spreadsheets with the registry data of every workshop are going yo be 
+ */
 const SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID = '1MJb12mObOlFesmKRmQ5DpqAEo_wUqE27'
 
 // const getFolderId = (folderName: string) => {
