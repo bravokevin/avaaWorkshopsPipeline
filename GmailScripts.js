@@ -88,7 +88,7 @@
         fromName: "Kevin Bravo",
         fromEmail: "kevinjosemotab@gmail.com",
         subject: subject,
-        htmlBody: createGmailHTMLMessage1(workshopData),
+        htmlBody: createGmailHTMLMessage(workshopData),
       }
       // {
       //   to: "bravokevinto@gmail.com",

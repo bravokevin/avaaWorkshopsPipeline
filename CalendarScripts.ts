@@ -165,14 +165,6 @@ const createEvent = (values: Workshop) => {
   return event.id;
 }
 
-// const processEventData = (...values) => {
-//   const eventDetails = [];
-//   values.forEach(value => {
-//     eventDetails.push({ ...values })
-//   })
-//   return eventDetails;
-// }
-
 // --------------------------------------------------- Function Related to Google Meet Meeting ---------------------------------------------------
 
 /**
