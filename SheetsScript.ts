@@ -44,7 +44,7 @@ const isBlank = (currentValue: any): boolean => currentValue[0] !== '';
 
 // --------------------------------------------- custom types --------------------------------------------
 
-type Pensum = 'Liderazgo' | 'Ejercicio Ciudadano' | 'Gerencia de si mismo' | 'TIC' | 'Emprendimiento';
+type Pensum = 'Liderazgo' | 'Ejercicio Ciudadano' | 'Gerencia de si mismo' | 'TICs' | 'Emprendimiento';
 type KindOfWorkshop = 'Presencial' | 'Virtual';
 type Platform = 'Zoom' | 'Google Meet' | 'Otra';
 
@@ -216,7 +216,7 @@ const processWorkshopType = (workshopData: Workshop[]): [Workshop[], Workshop[]]
     if (workshop.sendType === "ASAP") {
       workshopsToSendASAP.push(workshop)
     }
-    else if (workshop.sendType === "Semanal") {
+    else if (workshop.sendType === "Programar") {
       scheduledWOrkshops.push(workshop);
     }
   })

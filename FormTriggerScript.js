@@ -71,7 +71,7 @@ const formSubmit = (e) => {
     deleteTriger(triggerUid)
     scriptProperties.deleteProperty(triggerUid)
   }
-  const message = createEmailMessage(resp, workshopName, meetUrl, addToCalendarUrl);
+  const message = createEmailConfirmationMessage(resp, workshopName, meetUrl, addToCalendarUrl);
 
   MailApp.sendEmail(resp.email, `Confirmacion de inscripcion a ${workshopName}`, message)
 
@@ -87,7 +87,7 @@ const deleteTriger = (triggerUid) => {
 }
 
 
-const createEmailMessage = (resp, workshopName, meetUrl, addToCalendarUrl) => {
+const createEmailConfirmationMessage = (resp, workshopName, meetUrl, addToCalendarUrl) => {
   let message;
   if (meetUrl == '') {
     message = `Hola ${resp.name}!, Este correo confirma tu inscripcion a ${workshopName}.
