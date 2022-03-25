@@ -173,10 +173,10 @@ const createEvent = (values: Workshop) => {
  * @param eventId the id of the event we want get the meet meeting
  * @returns the meet link 
  */
-const getMeetEventLink = (eventId: string): string | undefined => {
+const getMeetEventLink = (eventId: string): string => {
   const event = Calendar.Events!.get(CALENDAR_ID, eventId);
   const meetLink = event.hangoutLink;
-  return meetLink;
+  return meetLink!;
 }
 
 // --------------------------------------------------- Function Related to "Add to my calendar" link ---------------------------------------------------
