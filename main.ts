@@ -13,20 +13,45 @@ type WorkshopFinalData = {
   completeFormUrl: string;
 }
 /**
- * The column from where we grab the meeting url of a workshop
+ * The column from where we set and grab the meeting url of a workshop
  */
 const COLUMN_FOR_MEETING_URL = 'Q'
 
+
 /**
- * Sets the meeting url asociated to an specific workhop in the main spreadsheet 
+ * Column of the main spreadsheet in where we set the meeting id 
+ */
+const COLUMN_FOR_MEETING_ID = 'R'
+
+/**
+ * Column in the main spreadsheet in where we set the meeting pasworkd, if so.
+ */
+const COLUMN_FOR_MEETING_PASSWORD = 'S'
+
+
+
+/**
+ * Sets all the meetings values asociated to an specific workhop in the main spreadsheet
  * 
  * @param rangeNumber the range of the especific workshop data row in a sheet
  * @param meetingUrl the meeting url 
+ * @param meetingId the meeting Id
+ * @param meetingPassword (optional) the meeting password
  */
-const setMeetUrl = (rangeNumber: number, meetingUrl: string) => {
-  const rangeName = `${COLUMN_FOR_MEETING_URL}${rangeNumber}`
-  const cell = sheet.getRange(rangeName)
-  cell.setValue(meetingUrl)
+const setMeeetingValues = (rangeNumber: number, meetingUrl: string, meetingId: string, meetingPassword?: string) => {
+  const rangeForMeetingUrl = `${COLUMN_FOR_MEETING_URL}${rangeNumber}`
+  const cellForMeetingUrl = sheet.getRange(rangeForMeetingUrl)
+
+  const rangeForMeetingId = `${COLUMN_FOR_MEETING_ID}${rangeNumber}`
+  const cellForMeetingId = sheet.getRange(rangeForMeetingId)
+
+  const rangeForMeetingPassword = `${COLUMN_FOR_MEETING_PASSWORD}${rangeNumber}`
+  const cellForMeetingPassword = sheet.getRange(rangeForMeetingPassword)
+
+  cellForMeetingUrl.setValue(meetingUrl);
+  cellForMeetingId.setValue(meetingId);
+  cellForMeetingPassword.setValue(meetingPassword);
+
 }
 
 /**
@@ -39,7 +64,7 @@ const calendarMain = (workshop: Workshop) => {
   const eventId = createEvent(workshop)
   const [meetLink, meetId] = getMeetEventLink(eventId!);
   const addUrl = getPublicEventLink(workshop, meetLink, meetId);
-  return [meetLink, addUrl]
+  return [meetLink, addUrl, meetId]
 }
 
 const sendScheduledWorkshops = () => {
@@ -70,8 +95,8 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
     workshopsToSendASAP.forEach(w => {
       //@ts-ignore
       const workshopsToSendASAPFinalDataObj: WorkshopFinalData = {}
-      const [meetLink, addUrl] = calendarMain(w);
-      setMeetUrl(w.id, meetLink);
+      const [meetLink, addUrl, meetId] = calendarMain(w);
+      setMeeetingValues(w.id, meetLink, meetId);
       workshopsToSendASAPFinalDataObj.workshop = w;
       [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
       workshopsToSendASAPFinalDataArr.push(workshopsToSendASAPFinalDataObj)

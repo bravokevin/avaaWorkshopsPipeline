@@ -8,7 +8,7 @@ const RANGE_FOR_GROUP_NAME = 'E7';
 
 const onOpen = () => {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('Custom Menu')
+  ui.createMenu('Para enviar Talleres')
     .addItem('Enviar talleres', 'sendWorkshop')
     .addToUi();
 }

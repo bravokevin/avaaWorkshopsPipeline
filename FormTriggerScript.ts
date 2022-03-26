@@ -111,16 +111,16 @@ const deleteTriger = (triggerUid: GoogleAppsScript.Script.Trigger) => {
  * @param addToCalendarUrl the "add to my calendar" link
  * @returns a confirmation message to send to all the people who registered in the form 
  */
-const createEmailConfirmationMessage = (resp: RegistrantData, workshopName: string, meetUrl: string, addToCalendarUrl: string) => {
+const createEmailConfirmationMessage = (workshopName: string, meetUrl: string, addToCalendarUrl: string) => {
   let message;
   if (meetUrl == '') {
-    message = `Hola ${resp.name}!, Este correo confirma tu inscripcion a ${workshopName}.
+    message = `Hola!, Este correo confirma tu inscripcion a ${workshopName}.
 
 Si gustas, puedes agregar este evento a tu calendario con este link ${addToCalendarUrl}
   `
   }
   else {
-    message = `Hola ${resp.name}!, Este correo confirma tu inscripcion a ${workshopName}
+    message = `Hola!, Este correo confirma tu inscripcion a ${workshopName}
 
 Este es el link de acceso a la reunion: ${meetUrl}
 
@@ -137,21 +137,17 @@ Si gustas, puedes agregar este evento a tu calendario con este link ${addToCalen
  * @returns the name and the email of a registrant
  */
 const getResponse = (response: GoogleAppsScript.Forms.FormResponse) => {
-  const resp: RegistrantData = { name: '', email: '' };
+  let resp: string[];
   const responses = response.getItemResponses();
   responses.forEach(r => {
     const itemName = r.getItem().getTitle();
     const itemResponse = r.getResponse();
-    if (itemName === 'Nombres') {
-      //@ts-ignore
-      resp.name = itemResponse;
-    }
     if (itemName === 'Correo electrónico') {
       //@ts-ignore
-      resp.email = itemResponse;
+      resp.push(itemResponse);
     }
   })
-  return resp
+  return resp;
 }
 
 /**
@@ -176,10 +172,20 @@ const closeForm = (form: GoogleAppsScript.Forms.Form, triggerUid: GoogleAppsScri
  * @see {@link https://developers.google.com/apps-script/guides/triggers/events#form-submit_1} for reference about the event object
  */
 const formSubmit = (e: EventFormResponse) => {
+
   const form = e.source;
   const numberOfResponses = form.getResponses().length;
   const triggerUid = e.triggerUid;
   const triggerUidString = triggerUid.toString();
+
+  /**
+ * This prevents collisions when multiple users are sending a form submision
+ * @see {@link https://developers.google.com/apps-script/reference/lock/lock} For reference about look service.
+ */
+  const lock = LockService.getScriptLock();
+  // Wait for up to 30 seconds for other processes to finish.
+  lock.waitLock(30000);
+
 
   // with the first submision, gets all the values to make the form work.
   if (numberOfResponses < 2) {
@@ -193,10 +199,13 @@ const formSubmit = (e: EventFormResponse) => {
   //updates the value of the current number of registrants in the main spreadsheet.
   const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
   sheet.getRange(cellForUpdate).setValue(numberOfResponses);
-
+  
+  SpreadsheetApp.flush()
+  // release the lock
+  lock.releaseLock();
   //sends the confirmation message for every registrant.
-  const message = createEmailConfirmationMessage(resp, workshopName, meetUrl, addToCalendarUrl);
-  MailApp.sendEmail(resp.email, `Confirmacion de inscripcion a ${workshopName}`, message);
+  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
+  MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a ${workshopName}`, message);
 
   //Close the form once the limit have been reached
   if (numberOfResponses >= limit) closeForm(form, triggerUid)
