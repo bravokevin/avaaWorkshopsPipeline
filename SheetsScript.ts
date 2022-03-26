@@ -112,7 +112,7 @@ const getWorkshopsDetails = (): any[][] | undefined => {
   try {
     // Get the values from the spreadsheet using spreadsheetId and the specified range.
     //@ts-ignore
-    const values = Sheets.Spreadsheets.Values.get(SPREADSHEET_ID, rangeName).values;
+    const values = Sheets.Spreadsheets.Values.get(spreadsheet.getId(), rangeName).values;
     //  Print the values from spreadsheet if values are available.
     if (!values) {
       throw new Error('No hay datos para procesar!')
