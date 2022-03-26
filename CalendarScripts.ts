@@ -133,17 +133,17 @@ const createCalendarDescription = (
 ): string => {
 
   const calendarDescription = `
-Competencia Asociada: ${pensum} 
-Facilitador: ${speaker} 
-Modalidad: ${kindOfWorkshop}
+<b>Competencia Asociada:</b> ${pensum} 
+<b>Facilitador:</b> ${speaker} 
+<b>Modalidad:</b> ${kindOfWorkshop}
 ${kindOfWorkshop === "Presencial" ? '' : 
-`Plataforma: ${platform}
-Link de la reunion: ${meetingLink}
-Id de la reunion: ${meetingId}
-${platform === 'Zoom'? `Contraseña de la reunion: ${meetingPassword}`: '' }` 
+`<b>Plataforma:</b> ${platform}
+<b>Link de la reunion:</b> ${meetingLink}
+<b>Id de la reunion:</b> ${meetingId}
+${platform === 'Zoom'? `<b>Contraseña de la reunion:</b> ${meetingPassword}`: '' }` 
 }
 
-  ${description}
+${description}
 `
   return calendarDescription;
 }
@@ -190,11 +190,12 @@ const getMeetEventLink = (eventId: string): string[] => {
 // --------------------------------------------------- Function Related to "Add to my calendar" link ---------------------------------------------------
 
 /**
+ * It creates an 'Add to my calendar' Link so all the registrant can add the specific event for a workshops to its calendar
  * 
- * @param workshop 
- * @param meetingLink the url of the meeting 
- * @param meetingId 
- * @returns 
+ * @param workshop the details of a workshop
+ * @param meetingLink the meeting link
+ * @param meetingId the meeting id
+ * @returns an 'Add to my calendar' link
  */
 const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?: string) => {
 
@@ -208,8 +209,9 @@ const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?
   const calendarStartDate = startDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
   const calendarEndDate = endDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
 
-  // titulo, descripcion, fecha, 
   const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}`
+
+  // `http://www.google.com/calendar/event?action=TEMPLATE&text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}` this is for open the mobile app rather than the browser
 
   return addUrl
 }
