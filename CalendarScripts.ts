@@ -158,6 +158,8 @@ ${description}
  * @returns the event id 
  */
 const createEvent = (values: Workshop) => {
+  //handler the case in where the calendar dosnt exist
+  // CalendarApp.getCalendarById()
   const { name, description, speaker, pensum, kindOfWorkshop, platform, date, startHour, endHour } = values;
 
   const [start, end] = getFormatedDate(date, startHour, endHour);

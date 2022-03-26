@@ -49,9 +49,14 @@ const copyForm = (): string => {
  */
 
 const createSpreadSheet = (month: string) => {
-  const spreadSheetWorkshopsFolder = DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID);
   const ss = SpreadsheetApp.create(`Talleres de ${month} del ${new Date().getFullYear()}`)
   const ssFile = DriveApp.getFileById(ss.getId())
-  ssFile.moveTo(spreadSheetWorkshopsFolder)
+  try {
+    const spreadSheetWorkshopsFolder = DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID);
+    ssFile.moveTo(spreadSheetWorkshopsFolder)
+  }
+  catch(e) {
+    Logger.log(e)
+  }
   return ss
 }

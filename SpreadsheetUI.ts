@@ -28,21 +28,19 @@ const sendWorkshop = () => {
     ui.alert(e)
     return
   }
+  if (ContactsApp.getContactGroup(groupName) === null) {
+    ui.alert("Este grupo de contactos no existe. Ingresa un grupo de contacto existente.");
+    return;
+  }
   const prompt = ui.prompt('Coloca el asunto del correo')
   const promptResponse = prompt.getResponseText()
-  // try {
-  //   ContactsApp.getContactGroup(groupName)
-  // }
-  // catch (e) {
-  //   const ui = SpreadsheetApp.getUi();
-  //   ui.alert(e)
-  //   return
-  // }
+
   try {
     main(values, promptResponse, groupName)
   }
   catch (e) {
     ui.alert(e)
+    return
   }
   //Once finished inform throught the UI that the process was completed succesfully
   SpreadsheetApp.getUi()
