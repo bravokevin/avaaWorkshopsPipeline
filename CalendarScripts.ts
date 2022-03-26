@@ -126,15 +126,22 @@ const createCalendarDescription = (
   speaker: string,
   kindOfWorkshop: KindOfWorkshop,
   platform: Platform,
-  description: string
+  description: string,
+  meetingLink?: string, 
+  meetingId?: string,
+  meetingPassword?:string
 ): string => {
 
   const calendarDescription = `
-  Competencia: ${pensum} 
-  Facilitador: ${speaker} 
-  Modalidad: ${kindOfWorkshop}
-  ${kindOfWorkshop === "Presencial" ? '' : `Plataforma: ${platform}`}
-  
+Competencia Asociada: ${pensum} 
+Facilitador: ${speaker} 
+Modalidad: ${kindOfWorkshop}
+${kindOfWorkshop === "Presencial" ? '' : 
+`Plataforma: ${platform}
+Link de la reunion: ${meetingLink}
+Id de la reunion: ${meetingId}
+${platform === 'Zoom'? `Contraseña de la reunion: ${meetingPassword}`: '' }` 
+}
 
   ${description}
 `
@@ -152,6 +159,7 @@ const createCalendarDescription = (
  */
 const createEvent = (values: Workshop) => {
   const { name, description, speaker, pensum, kindOfWorkshop, platform, date, startHour, endHour } = values;
+
   const [start, end] = getFormatedDate(date, startHour, endHour);
   const calendarDescription = createCalendarDescription(pensum, speaker, kindOfWorkshop, platform, description);
   const eventDetails = createEventObject(name, kindOfWorkshop, platform, calendarDescription, start, end);
@@ -169,26 +177,39 @@ const createEvent = (values: Workshop) => {
  * gets the meet meeting link of an specific event 
  * 
  * @param eventId the id of the event we want get the meet meeting
- * @returns the meet link 
+ * @returns the meet link and its id
  */
-const getMeetEventLink = (eventId: string): string => {
+const getMeetEventLink = (eventId: string): string[] => {
   const event = Calendar.Events!.get(CALENDAR_ID, eventId);
   const meetLink = event.hangoutLink;
-  return meetLink!;
+  const index = meetLink!.lastIndexOf('/')
+  const meetId = meetLink!.slice(index + 1)
+  return [meetLink!, meetId];
 }
 
 // --------------------------------------------------- Function Related to "Add to my calendar" link ---------------------------------------------------
 
 /**
- * @todo need to change
- * @param eventId the event id of the event we want to get the link
+ * 
+ * @param workshop 
+ * @param meetingLink the url of the meeting 
+ * @param meetingId 
  * @returns 
  */
-const getPublicEventLink = (eventId: string) => {
-  const event = Calendar.Events!.get(CALENDAR_ID, eventId);
-  const htmlLink = event.htmlLink!
-  const identificatorIndex = htmlLink.indexOf('=')
-  const identificator = htmlLink.slice(identificatorIndex + 1)
-  const addUrl = `https://calendar.google.com/event?action=TEMPLATE&tmeid=${identificator}&tmsrc=qe67k7alpo1k49njnnl0lt83qs%40group.calendar.google.com`
+const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?: string) => {
+
+  const { name, description, speaker, pensum, kindOfWorkshop, platform, date, startHour, endHour } = workshop;
+  const location = meetingLink ? meetingLink : 'Oficinas de AAVA'
+  const calendarName = encodeURIComponent(name)
+  const NDescription = createCalendarDescription(pensum, speaker, kindOfWorkshop, platform, description, meetingLink, meetingId)
+
+  const [startDate, endDate] = getFormatedDate(date, startHour, endHour)
+  const EncodeDescription = encodeURIComponent(NDescription)
+  const calendarStartDate = startDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
+  const calendarEndDate = endDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
+
+  // titulo, descripcion, fecha, 
+  const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}`
+
   return addUrl
 }

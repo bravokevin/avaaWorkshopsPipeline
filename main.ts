@@ -37,8 +37,8 @@ const setMeetUrl = (rangeNumber: number, meetingUrl: string) => {
  */
 const calendarMain = (workshop: Workshop) => {
   const eventId = createEvent(workshop)
-  const meetLink = getMeetEventLink(eventId!);
-  const addUrl = getPublicEventLink(eventId!);
+  const [meetLink, meetId] = getMeetEventLink(eventId!);
+  const addUrl = getPublicEventLink(workshop, meetLink, meetId);
   return [meetLink, addUrl]
 }
 
