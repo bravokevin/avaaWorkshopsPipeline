@@ -7,13 +7,13 @@ const SHEET_NAME: string = 'Sheet1'; // the name of the {sheet} in the specified
 /**
  * The start column from where we search for the workshops data
  */
-const START_COLUMN: string = 'A';
+const START_COLUMN: string = 'C';
 
 
 /**
  * The end  column from where we search for the workshops data
  */
-const END_COLUMN: string = 'L';
+const END_COLUMN: string = 'N';
 
 /**
  * the key for storing the scheduled workshop details using {@linkcode scriptProperties}

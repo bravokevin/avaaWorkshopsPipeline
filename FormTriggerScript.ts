@@ -11,7 +11,7 @@ const COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS = 'O'
 /**
  * The column from where we are going to grab the limit of participants of the workshop to set a limit of registries in the form
  */
-const COLUMN_FOR_THE_LIMIT_DATA = 'H'
+const COLUMN_FOR_THE_LIMIT_DATA = 'J'
 
 type EventFormResponse = {
   response: GoogleAppsScript.Forms.FormResponse;
