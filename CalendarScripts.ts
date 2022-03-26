@@ -96,6 +96,22 @@ const createEventObject = (name: string, kindOfWorkshop: KindOfWorkshop, platfor
   return event;
 }
 
+
+/**
+ * Evaluates wheter the calendar under the id {@linkcode CALENDAR_ID} exist or not. If exist returns that id, if not, returns the id of the users default calendar.
+ * 
+ * @returns the deafults calendar id or {@linkcode CALENDAR_ID}
+ */
+ const getCalendarId= () => {
+  let calendarId: string = '';
+  if (CalendarApp.getCalendarById(CALENDAR_ID) === null) {
+    calendarId = CalendarApp.getDefaultCalendar().getId();
+  } else {
+    calendarId = CALENDAR_ID
+  }
+  return calendarId;
+}
+
 /**
  * formats the string passes as arguments to a date obj
  * 
@@ -127,21 +143,21 @@ const createCalendarDescription = (
   kindOfWorkshop: KindOfWorkshop,
   platform: Platform,
   description: string,
-  meetingLink?: string, 
+  meetingLink?: string,
   meetingId?: string,
-  meetingPassword?:string
+  meetingPassword?: string
 ): string => {
 
   const calendarDescription = `
 <b>Competencia Asociada:</b> ${pensum} 
 <b>Facilitador:</b> ${speaker} 
 <b>Modalidad:</b> ${kindOfWorkshop}
-${kindOfWorkshop === "Presencial" ? '' : 
+${kindOfWorkshop === "Presencial" ? '' :
 `<b>Plataforma:</b> ${platform}
 <b>Link de la reunion:</b> ${meetingLink}
 <b>Id de la reunion:</b> ${meetingId}
-${platform === 'Zoom'? `<b>Contraseña de la reunion:</b> ${meetingPassword}`: '' }` 
-}
+${platform === 'Zoom' ? `<b>Contraseña de la reunion:</b> ${meetingPassword}` : ''}`
+    }
 
 ${description}
 `
@@ -159,14 +175,13 @@ ${description}
  */
 const createEvent = (values: Workshop) => {
   //handler the case in where the calendar dosnt exist
-  // CalendarApp.getCalendarById()
   const { name, description, speaker, pensum, kindOfWorkshop, platform, date, startHour, endHour } = values;
-
+  const calendarId = getCalendarId();
   const [start, end] = getFormatedDate(date, startHour, endHour);
   const calendarDescription = createCalendarDescription(pensum, speaker, kindOfWorkshop, platform, description);
   const eventDetails = createEventObject(name, kindOfWorkshop, platform, calendarDescription, start, end);
   // creates the event
-  const event = Calendar.Events!.insert(eventDetails, CALENDAR_ID, {
+  const event = Calendar.Events!.insert(eventDetails, calendarId, {
     conferenceDataVersion: 1,
   });
 
@@ -182,7 +197,8 @@ const createEvent = (values: Workshop) => {
  * @returns the meet link and its id
  */
 const getMeetEventLink = (eventId: string): string[] => {
-  const event = Calendar.Events!.get(CALENDAR_ID, eventId);
+  const calendarId = getCalendarId();
+  const event = Calendar.Events!.get(calendarId, eventId);
   const meetLink = event.hangoutLink;
   const index = meetLink!.lastIndexOf('/')
   const meetId = meetLink!.slice(index + 1)
