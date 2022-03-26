@@ -27,8 +27,15 @@ const deleteFile = (FileId: string) => {
  */
 const copyForm = (): string => {
   const templateWorkshopForm = DriveApp.getFileById(TEMPLATE_WORKSHOP_FORM_ID);
-  const subfolder = DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS);
-  const formCopyFile = templateWorkshopForm.makeCopy(subfolder);
+  let subfolder: GoogleAppsScript.Drive.Folder;
+  let formCopyFile: GoogleAppsScript.Drive.File;
+  try {
+    subfolder = DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS);
+    formCopyFile = templateWorkshopForm.makeCopy(subfolder);
+  }
+  catch (e) {
+    formCopyFile = templateWorkshopForm.makeCopy();
+  }
   const formCopyFileId = formCopyFile.getId();
   return formCopyFileId;
 }
@@ -55,7 +62,7 @@ const createSpreadSheet = (month: string) => {
     const spreadSheetWorkshopsFolder = DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID);
     ssFile.moveTo(spreadSheetWorkshopsFolder)
   }
-  catch(e) {
+  catch (e) {
     Logger.log(e)
   }
   return ss
