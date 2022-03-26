@@ -13,14 +13,15 @@ const getContacts = (groupName: string): string[][] => {
   const contactsRaw = contactGroup.getContacts();
   const contacts: string[] = []
   const contactsArr: string[][] = []
-  //for each contact store its primary email address in the {contacts} variable
-  contactsRaw.forEach(contact => {
-    if (contacts.length >= 100) {
-      contactsArr.push(contacts);
-      contacts.length = 0;
-    }
-    contacts.push(contact.getEmails()[0].getAddress())
+
+  contactsRaw.forEach(c => {
+    contacts.push(c.getEmails()[0].getAddress())
   })
+
+  while (contacts.length > 0) {
+    contactsArr.push(contacts.splice(0, 100))
+  }
+
   return contactsArr;
 }
 
