@@ -6,18 +6,20 @@
  * @returns  an array of email addresses of all the contacts in the specified group
  */
 const getContacts = (groupName: string): string[][] => {
-
   const contactGroup = ContactsApp.getContactGroup(groupName)
+  if (contactGroup === null) {
+    throw new Error("Este grupo de contactos no existe.")
+  }
   const contactsRaw = contactGroup.getContacts();
   const contacts: string[] = []
   const contactsArr: string[][] = []
   //for each contact store its primary email address in the {contacts} variable
   contactsRaw.forEach(contact => {
-    if(contacts.length >= 100){
+    if (contacts.length >= 100) {
       contactsArr.push(contacts);
       contacts.length = 0;
     }
-    contacts.push(contact.getAddresses()[0].getAddress())
+    contacts.push(contact.getEmails()[0].getAddress())
   })
   return contactsArr;
 }

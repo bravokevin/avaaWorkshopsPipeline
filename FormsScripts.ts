@@ -111,7 +111,7 @@ const updateFormData = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet) => {
   const ssId = ss.getId()
   const updatedData = {
     storedMonth: currentMonth,
-    actualss: ssId
+    actualSpreadSheet: ssId
   }
   const jsonUpdatedData = JSON.stringify(updatedData)
   scriptProperties.setProperty(SCRIPT_PROPERTIES_FORM_KEY, jsonUpdatedData)

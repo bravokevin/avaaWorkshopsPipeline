@@ -37,7 +37,7 @@ const resetAllScriptPropertiesValues = () => {
 /**
  * Cheks if a value is blank
  */
-const isBlank = (currentValue: any): boolean => currentValue[0] !== '';
+const isBlank = (currentValue: any): boolean => currentValue[0] === '';
 
 
 // --------------------------------------------- custom types --------------------------------------------
@@ -117,7 +117,7 @@ const getWorkshopsDetails = (): any[][] | undefined => {
     if (!values) {
       throw new Error('No hay datos para procesar!')
     }
-    if (!values.every(isBlank)) {
+    if (values.every(isBlank)) {
       throw new Error('Todos los campos deben estar llenos')
     }
     return values

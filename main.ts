@@ -54,10 +54,9 @@ const sendScheduledWorkshops = () => {
  * @param subject the subject of the email
  * @param groupName the contact group name to which we want to send the email
  */
-const main = (subject: string, groupName: string) => {
+const main = (workshopsValuesArr: any[], subject: string, groupName: string) => {
   //getting all the necessarie values
-  const workshopsValuesArr = getWorkshopsDetails();
-  const processedWorkshopData = processData(workshopsValuesArr!);
+  const processedWorkshopData = processData(workshopsValuesArr);
   const [scheduledWOrkshops, workshopsToSendASAP] = processWorkshopType(processedWorkshopData);
 
   const workshopsToSendASAPFinalDataArr: WorkshopFinalData[] = []
