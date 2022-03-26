@@ -7,7 +7,7 @@ const CALENDAR_ID = "f9ch4fca765f9ggg9emuks83h0@group.calendar.google.com"
 /**
  * The id of a template form we use to generate copies of it 
  */
-const TEMPLATE_WORKSHOP_FORM_ID = '1J2p6WBr8POFKb6aTWzolWOvVkC8odpgOur5MLiilMKo'
+const TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY = '1J2p6WBr8POFKb6aTWzolWOvVkC8odpgOur5MLiilMKo'
 
 /**
  * The id in where all the copy of the template form are going to be

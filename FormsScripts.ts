@@ -205,3 +205,18 @@ Si deseas, puedes añadir este evento a tu calendario = ${addToMyCalendarLink}`;
 
   return confirmationMessage;
 }
+
+/**
+ * Creates a form template for sending workshops.
+ * 
+ * @returns The id of the newly created form 
+ */
+const createTemplateForm = () => {
+  const form = FormApp.create('Formulario Template Para Talleres');
+  form.addTextItem().setTitle('Appellidos').setRequired(true);
+  form.addTextItem().setTitle('Nombres').setRequired(true);
+  form.addTextItem().setTitle('Correo electronico').setRequired(true);
+  // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');
+  // form.addTextItem().setTitle('Cedula de Identidad')
+  return form.getId();
+}

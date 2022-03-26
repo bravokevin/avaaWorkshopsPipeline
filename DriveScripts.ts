@@ -16,7 +16,7 @@ const deleteFile = (FileId: string) => {
 
 
 /**
- * Creates a copy of the form template {@linkcode TEMPLATE_WORKSHOP_FORM_ID}
+ * Creates a copy of the form template {@linkcode TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY}
  * 
  * It makes a copy of the form we set of as template for registring to the workshops an then move that document created to a specific directory.
  * 
@@ -26,15 +26,33 @@ const deleteFile = (FileId: string) => {
  * @see {@link https://developers.google.com/apps-script/reference/drive/file} for reference about DriveApp 'File' Class
  */
 const copyForm = (): string => {
-  const templateWorkshopForm = DriveApp.getFileById(TEMPLATE_WORKSHOP_FORM_ID);
+  let templateWorkshopForm: GoogleAppsScript.Drive.File;
   let subfolder: GoogleAppsScript.Drive.Folder;
   let formCopyFile: GoogleAppsScript.Drive.File;
+  let formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+  //in the case does not exist in the propertie service.
+  if (formId === null) {
+    scriptProperties.setProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY, createTemplateForm());
+    formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+  }
+  //in the case the form has been deleted
+  try {
+    templateWorkshopForm = DriveApp.getFileById(formId);
+  }
+  catch (e) {
+    scriptProperties.setProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY, createTemplateForm());
+    formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+    templateWorkshopForm = DriveApp.getFileById(formId);
+    Logger.log(e)
+  }
+
   try {
     subfolder = DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS);
     formCopyFile = templateWorkshopForm.makeCopy(subfolder);
   }
   catch (e) {
     formCopyFile = templateWorkshopForm.makeCopy();
+    Logger.log(e)
   }
   const formCopyFileId = formCopyFile.getId();
   return formCopyFileId;
