@@ -142,11 +142,11 @@ const getResponse = (response: GoogleAppsScript.Forms.FormResponse) => {
   responses.forEach(r => {
     const itemName = r.getItem().getTitle();
     const itemResponse = r.getResponse();
-    if (itemName === 'Nombre y Apellido') {
+    if (itemName === 'Nombres') {
       //@ts-ignore
       resp.name = itemResponse;
     }
-    if (itemName === 'Email') {
+    if (itemName === 'Correo electrónico') {
       //@ts-ignore
       resp.email = itemResponse;
     }
