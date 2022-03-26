@@ -165,6 +165,7 @@ const closeForm = (form: GoogleAppsScript.Forms.Form, triggerUid: GoogleAppsScri
   form.setAcceptingResponses(false);
   deleteTriger(triggerUid);
   scriptProperties.deleteProperty(triggerUid.toString());
+  deleteFile(form.getId());
 }
 
 

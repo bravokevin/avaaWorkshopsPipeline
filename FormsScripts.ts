@@ -28,7 +28,7 @@ Fecha: ${date}
 Horario: de ${startHour} hasta las ${endHour}
 Facilitador: ${speaker}
 Modalidad: ${kindOfWorkshop}
-${kindOfWorkshop === "Presencial" ? '' : `Plataforma: ${platform}`}
+${kindOfWorkshop === "Presencial" ? 'Lugar: Oficinas de Avaa' : `Plataforma: ${platform}`}
 ${description === ' ' ? '': `\n ${description}`}
 `;
 
@@ -168,23 +168,23 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form) => {
  */
 const createForm = (data: Workshop, addUrl: string) => {
   const { id, name } = data;
-  const formDescription = createFormDescription(data)
+  const formDescription = createFormDescription(data);
   const formCopyId = copyForm();
-  const form = FormApp.openById(formCopyId)
-  form.setDescription(formDescription)
-  form.setTitle(name)
+  const form = FormApp.openById(formCopyId);
+  form.setDescription(formDescription);
+  form.setTitle(name);
   //stores the id and the "add to my calendar url"
-  form.setCustomClosedFormMessage(id + '-/' + addUrl)
+  form.setCustomClosedFormMessage(id + '-/' + addUrl);
   //creates a trigger 'onFormSubmit' for every form.
-  createTrigger(form)
+  createTrigger(form);
   const formUrl = form.getPublishedUrl();
-  const formShortenUrl = form.shortenFormUrl(formUrl)
-  const ss = createSpreadSheetFormResponse(form)
+  const formShortenUrl = form.shortenFormUrl(formUrl);
+  const ss = createSpreadSheetFormResponse(form);
   /**
-   * @see {@link https://stackoverflow.com/questions/63213064/form-responses-spreadsheet-getsheets-doesnt-return-responses-sheet} for referenec about using `flush`
+   * @see {@link https://stackoverflow.com/questions/63213064/form-responses-spreadsheet-getsheets-doesnt-return-responses-sheet} for reference about using `flush`
    */
-  SpreadsheetApp.flush()
-  setSheetName(ss, name)
+  SpreadsheetApp.flush();
+  setSheetName(ss, name);
 
-  return [formShortenUrl, formUrl]
+  return [formShortenUrl, formUrl];
 }

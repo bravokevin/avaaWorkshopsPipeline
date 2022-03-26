@@ -37,8 +37,8 @@ const resetAllValues = () => {
   triggers.forEach(t => {
     ScriptApp.deleteTrigger(t)
   })
-  DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS).getFiles().next().setTrashed
-  DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID).getFiles().next().setTrashed
+  DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS).getFiles().next().setTrashed(true)
+  DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID).getFiles().next().setTrashed(true)
 }
 /**
  * Cheks if a value is blank

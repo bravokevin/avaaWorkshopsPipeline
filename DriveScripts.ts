@@ -5,13 +5,14 @@
 //   return folderId
 // }
 
-// const getFileId = () => {
-//   const files = DriveApp.getFileById()
-//   Logger.log(files)
-//   // const file = files.next()
-//   // const fileId = file.getId()
-//   // Logger.log(fileId)
-// }
+/**
+ * Deletes a file based on its Id
+ * @param FileId the id of the file we want to delete
+ */
+const deleteFile = (FileId: string) => {
+  const file = DriveApp.getFileById(FileId);
+  file.setTrashed(true);
+}
 
 
 /**
