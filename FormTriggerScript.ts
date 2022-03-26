@@ -147,6 +147,7 @@ const getResponse = (response: GoogleAppsScript.Forms.FormResponse) => {
       resp.push(itemResponse);
     }
   })
+  //@ts-ignore
   return resp;
 }
 
@@ -194,19 +195,21 @@ const formSubmit = (e: EventFormResponse) => {
   }
 
   const { workshopName, range, meetUrl, addToCalendarUrl, limit } = getFormIdividualData(triggerUidString);
-  const resp = getResponse(e.response);
 
   //updates the value of the current number of registrants in the main spreadsheet.
   const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
   sheet.getRange(cellForUpdate).setValue(numberOfResponses);
-  
+
   SpreadsheetApp.flush()
   // release the lock
   lock.releaseLock();
   //sends the confirmation message for every registrant.
-  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
-  MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a ${workshopName}`, message);
 
-  //Close the form once the limit have been reached
-  if (numberOfResponses >= limit) closeForm(form, triggerUid)
+  //Close the form once the limit have been reached, and send to all registrants the data of the meeting link
+  if (numberOfResponses >= limit) {
+    const resp = getResponse(e.response);
+    const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
+    closeForm(form, triggerUid)
+    MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a ${workshopName}`, message);
+  }
 }
