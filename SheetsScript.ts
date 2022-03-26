@@ -1,8 +1,6 @@
-const SPREADSHEET_ID = "1qUy-dHm7IOU8VykaR2gRDn-sZwnMfh7Rqj_ktaKIcRg"; // The ID of the master sheet in where all workshops details are visualized
-
 // --------------------------------------------- constants variables ---------------------------------------------
 
-const SHEET_NAME: string = 'Sheet1'; // the name of the {sheet} in the specified spreadsheet
+const SHEET_NAME: string = 'Vista principal de talleres'; // the name of the {sheet} in the specified spreadsheet
 
 /**
  * The start column from where we search for the workshops data
@@ -20,8 +18,8 @@ const END_COLUMN: string = 'N';
  */
 const SCRIPT_PROPERTIES_WORKSHOPS_KEY: string = 'CURRENT_WORKSHOPS';
 
-const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID); // the actual spreadsheet object
-const sheet = spreadsheet.getSheets()[1]; //the sheet from where we grab all the data
+const spreadsheet = SpreadsheetApp.getActiveSpreadsheet() //Gets the active spreadsheet
+const sheet = spreadsheet.getSheetByName(SHEET_NAME) //the sheet from where we grab all the data
 
 /**
  * script property service object
