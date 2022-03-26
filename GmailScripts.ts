@@ -40,7 +40,7 @@ const convert_ = (object: MessageObj) => {
     attachments,
   } = object;
 
-  if (!to) throw new Error("Please set 'to'.");
+  if (!to && !cc) throw new Error("Please set 'to' or 'cc'.");
   const obj = [`MIME-Version: 1.0`, `To: ${to}`];
   if (cc) obj.push(`CC: ${cc}`);
   if (bcc) obj.push(`BCC: ${bcc}`);

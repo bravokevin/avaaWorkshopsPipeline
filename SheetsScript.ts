@@ -31,8 +31,14 @@ const scriptProperties: GoogleAppsScript.Properties.Properties = PropertiesServi
 /**
  * Deletes all the script properties values whithin the script;
  */
-const resetAllScriptPropertiesValues = () => {
+const resetAllValues = () => {
   scriptProperties.deleteAllProperties();
+  const triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(t => {
+    ScriptApp.deleteTrigger(t)
+  })
+  DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS).getFiles().next().setTrashed
+  DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID).getFiles().next().setTrashed
 }
 /**
  * Cheks if a value is blank
