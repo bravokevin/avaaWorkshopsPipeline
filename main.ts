@@ -80,6 +80,6 @@ const main = (subject: string, groupName: string) => {
     })
     sendEmails(workshopsToSendASAPFinalDataArr, subject, groupName);
   }
-  //se update el rango d ela verga esta
-  // updateSheetRange()
+  //update the range from where we grab the workshops data
+  updateSheetRange()
 }

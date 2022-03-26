@@ -19,7 +19,7 @@ const END_COLUMN: string = 'N';
 const SCRIPT_PROPERTIES_WORKSHOPS_KEY: string = 'CURRENT_WORKSHOPS';
 
 const spreadsheet = SpreadsheetApp.getActiveSpreadsheet() //Gets the active spreadsheet
-const sheet = spreadsheet.getSheetByName(SHEET_NAME) //the sheet from where we grab all the data
+const sheet = spreadsheet.getSheetByName(SHEET_NAME)! //the sheet from where we grab all the data
 
 /**
  * script property service object
