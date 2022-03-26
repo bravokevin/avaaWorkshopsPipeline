@@ -29,7 +29,7 @@ Horario: de ${startHour} hasta las ${endHour}
 Facilitador: ${speaker}
 Modalidad: ${kindOfWorkshop}
 ${kindOfWorkshop === "Presencial" ? 'Lugar: Oficinas de Avaa' : `Plataforma: ${platform}`}
-${description === ' ' ? '': `\n ${description}`}
+${description === ' ' ? '' : `\n ${description}`}
 `;
 
   return formDescription;
@@ -171,7 +171,9 @@ const createForm = (data: Workshop, addUrl: string) => {
   const formDescription = createFormDescription(data);
   const formCopyId = copyForm();
   const form = FormApp.openById(formCopyId);
+  const confirmationMessage = createFormConfirmationMessage(addUrl);
   form.setDescription(formDescription);
+  form.setConfirmationMessage(confirmationMessage);
   form.setTitle(name);
   //stores the id and the "add to my calendar url"
   form.setCustomClosedFormMessage(id + '-/' + addUrl);
@@ -187,4 +189,19 @@ const createForm = (data: Workshop, addUrl: string) => {
   setSheetName(ss, name);
 
   return [formShortenUrl, formUrl];
+}
+
+/**
+ * Creates a confirmation message to the form Confirmation message
+ * 
+ * @param addToMyCalendarLink 
+ * @returnsthe the confirmation message 
+ */
+const createFormConfirmationMessage = (addToMyCalendarLink: string) => {
+
+  const confirmationMessage = `Perfecto, tu participación se ha registrado exitosamente!
+
+Si deseas, puedes añadir este evento a tu calendario = ${addToMyCalendarLink}`;
+
+  return confirmationMessage;
 }

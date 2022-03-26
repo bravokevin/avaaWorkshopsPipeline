@@ -209,7 +209,7 @@ const formSubmit = (e: EventFormResponse) => {
   if (numberOfResponses >= limit) {
     const resp = getResponse(e.response);
     const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
-    closeForm(form, triggerUid)
     MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a ${workshopName}`, message);
+    closeForm(form, triggerUid)
   }
 }
