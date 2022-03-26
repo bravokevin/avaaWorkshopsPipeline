@@ -21,7 +21,7 @@ const sendWorkshop = () => {
   try {
     values = getWorkshopsDetails()!;
     values.forEach(value => {
-      talleresEnviados.push(`* ${value[0]}`)
+      talleresEnviados.push(`- ${value[1]}`)
     })
   }
   catch (e) {
