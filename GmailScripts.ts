@@ -40,7 +40,7 @@ const convert_ = (object: MessageObj) => {
     attachments,
   } = object;
 
-  if (!to && !cc) throw new Error("Please set 'to' or 'cc'.");
+  if (!to ) throw new Error("Please set 'to'.");
   const obj = [`MIME-Version: 1.0`, `To: ${to}`];
   if (cc) obj.push(`CC: ${cc}`);
   if (bcc) obj.push(`BCC: ${bcc}`);
@@ -120,7 +120,7 @@ const createMessageObj = (workshopData: WorkshopFinalData[], subject: string, co
   const messageObj: MessageObj[] = []
   contactsAddresses.forEach(contactBatch => {
     const obj = {
-      cc: 'ghosterinc@gmail.com',
+      to: 'kevinjosemotab@gmail.com',
       bcc: contactBatch.toString(),
       fromName: "Kevin Bravo",
       fromEmail: "kevinjosemotab@gmail.com",
