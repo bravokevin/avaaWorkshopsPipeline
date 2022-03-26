@@ -23,15 +23,14 @@ const createFormDescription = (workshop: Workshop) => {
   const { name, pensum, date, startHour, endHour, speaker, kindOfWorkshop, platform, description } = workshop;
 
   const formDescription = `Taller: ${name}
-  Competencia: ${pensum}
-  Fecha: ${date}
-  Horario: de ${startHour} hasta las ${endHour}
-  Facilitador: ${speaker}
-  Modalidad: ${kindOfWorkshop}
-  ${kindOfWorkshop === "Presencial" ? '' : `Plataforma: ${platform}`}
-  
-  ${description}
-  `;
+Competencia: ${pensum}
+Fecha: ${date}
+Horario: de ${startHour} hasta las ${endHour}
+Facilitador: ${speaker}
+Modalidad: ${kindOfWorkshop}
+${kindOfWorkshop === "Presencial" ? '' : `Plataforma: ${platform}`}
+${description === ' ' ? '': `\n ${description}`}
+`;
 
   return formDescription;
 }
