@@ -1,5 +1,3 @@
-const CALENDAR_ID = "qe67k7alpo1k49njnnl0lt83qs@group.calendar.google.com"
-
 // --------------------------------------------------- Calendar Utils Functions ---------------------------------------------------
 
 /**

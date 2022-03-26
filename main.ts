@@ -3,6 +3,10 @@
  * @author Kevin Bravo <@kevbto> <bravokevinto@gmail.com>
  * @module 
  */
+
+/**
+ * 
+ */
 type WorkshopFinalData = {
   workshop: Workshop;
   formUrl: string;
