@@ -145,10 +145,14 @@ const getFormData = () => {
  * @see {@link https://developers.google.com/apps-script/guides/triggers/installable} for reference about triggers
  * @see {@Link https://developers.google.com/apps-script/reference/script/form-trigger-builder} for reference about FormTriggerBuilder class
  */
-const createTrigger = (form: GoogleAppsScript.Forms.Form) => {
+const createTrigger = (form: GoogleAppsScript.Forms.Form, start: Date) => {
   ScriptApp.newTrigger('formSubmit')
     .forForm(form)
     .onFormSubmit()
+    .create();
+  ScriptApp.newTrigger('closeUncompleteForm')
+    .timeBased()
+    .at(start)
     .create();
 }
 
@@ -167,9 +171,11 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form) => {
  * @returns the shorten and unshorten url versions of the newly created form 
  */
 const createForm = (data: Workshop, addUrl: string) => {
-  const { id, name } = data;
+  const { id, name, date, startHour } = data;
+  // adds 30 minutes to the start hour of the workshop
+  const start = new Date(date + startHour).getTime() + 1800000;
   const formDescription = createFormDescription(data);
-  const formCopyId = copyForm();
+  const formCopyId = copyForm(name);
   const form = FormApp.openById(formCopyId);
   const confirmationMessage = createFormConfirmationMessage(addUrl);
   form.setDescription(formDescription);
@@ -178,7 +184,7 @@ const createForm = (data: Workshop, addUrl: string) => {
   //stores the id and the "add to my calendar url"
   form.setCustomClosedFormMessage(id + '-/' + addUrl);
   //creates a trigger 'onFormSubmit' for every form.
-  createTrigger(form);
+  createTrigger(form, new Date(start));
   const formUrl = form.getPublishedUrl();
   const formShortenUrl = form.shortenFormUrl(formUrl);
   const ss = createSpreadSheetFormResponse(form);
@@ -211,12 +217,14 @@ Si deseas, puedes añadir este evento a tu calendario = ${addToMyCalendarLink}`;
  * 
  * @returns The id of the newly created form 
  */
-const createTemplateForm = () => {
+const createTemplateForm = (destinationFolder: GoogleAppsScript.Drive.Folder) => {
   const form = FormApp.create('Formulario Template Para Talleres');
   form.addTextItem().setTitle('Appellidos').setRequired(true);
   form.addTextItem().setTitle('Nombres').setRequired(true);
   form.addTextItem().setTitle('Correo electronico').setRequired(true);
   // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');
   // form.addTextItem().setTitle('Cedula de Identidad')
+  const file = DriveApp.getFileById(form.getId())
+  file.moveTo(destinationFolder)
   return form.getId();
 }

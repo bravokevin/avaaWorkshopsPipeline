@@ -29,6 +29,9 @@ const COLUMN_FOR_MEETING_ID = 'R'
 const COLUMN_FOR_MEETING_PASSWORD = 'S'
 
 
+const COLUMN_FOR_FORM_URL = 'T'
+
+
 
 /**
  * Sets all the meetings values asociated to an specific workhop in the main spreadsheet
@@ -38,7 +41,7 @@ const COLUMN_FOR_MEETING_PASSWORD = 'S'
  * @param meetingId the meeting Id
  * @param meetingPassword (optional) the meeting password
  */
-const setMeeetingValues = (rangeNumber: number, meetingUrl: string, meetingId: string, meetingPassword?: string) => {
+const setMeeetingValues = (rangeNumber: number, meetingUrl: string, meetingId: string, formUrl: string, meetingPassword?: string) => {
   const rangeForMeetingUrl = `${COLUMN_FOR_MEETING_URL}${rangeNumber}`
   const cellForMeetingUrl = sheet.getRange(rangeForMeetingUrl)
 
@@ -48,9 +51,13 @@ const setMeeetingValues = (rangeNumber: number, meetingUrl: string, meetingId: s
   const rangeForMeetingPassword = `${COLUMN_FOR_MEETING_PASSWORD}${rangeNumber}`
   const cellForMeetingPassword = sheet.getRange(rangeForMeetingPassword)
 
+  const rangeForFormUrl = `${COLUMN_FOR_FORM_URL}${rangeNumber}`
+  const cellForFormUrl = sheet.getRange(rangeForFormUrl)
+
   cellForMeetingUrl.setValue(meetingUrl);
   cellForMeetingId.setValue(meetingId);
   cellForMeetingPassword.setValue(meetingPassword);
+  cellForFormUrl.setValue(formUrl)
 
 }
 
@@ -96,9 +103,9 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
       //@ts-ignore
       const workshopsToSendASAPFinalDataObj: WorkshopFinalData = {}
       const [meetLink, addUrl, meetId] = calendarMain(w);
-      setMeeetingValues(w.id, meetLink, meetId);
       workshopsToSendASAPFinalDataObj.workshop = w;
       [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
+      setMeeetingValues(w.id, meetLink, meetId, workshopsToSendASAPFinalDataObj.completeFormUrl);
       workshopsToSendASAPFinalDataArr.push(workshopsToSendASAPFinalDataObj)
 
     })

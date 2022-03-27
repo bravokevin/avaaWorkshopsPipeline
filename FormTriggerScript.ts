@@ -46,7 +46,6 @@ const getInitValues = (form: GoogleAppsScript.Forms.Form) => {
   const addToCalendarUrl = rawMessage[1];
   const meetRange = COLUMN_FOR_MEETING_URL + range
   const limitRange = COLUMN_FOR_THE_LIMIT_DATA + range
-
   const meetUrl = sheet.getRange(meetRange).getValue()
   const limit = sheet.getRange(limitRange).getValue()
 
@@ -55,8 +54,8 @@ const getInitValues = (form: GoogleAppsScript.Forms.Form) => {
     range,
     meetUrl,
     addToCalendarUrl,
-    limit
-  }
+    limit,
+  };
   return values;
 }
 
@@ -136,16 +135,18 @@ Si gustas, puedes agregar este evento a tu calendario con este link ${addToCalen
  * @param response the form response object of an entry
  * @returns the name and the email of a registrant
  */
-const getResponse = (response: GoogleAppsScript.Forms.FormResponse) => {
+const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[]) => {
   let resp: string[];
-  const responses = response.getItemResponses();
-  responses.forEach(r => {
-    const itemName = r.getItem().getTitle();
-    const itemResponse = r.getResponse();
-    if (itemName === 'Correo electrónico') {
-      //@ts-ignore
-      resp.push(itemResponse);
-    }
+
+  responses.forEach(response => {
+    response.getItemResponses().forEach(r => {
+      const itemName = r.getItem().getTitle();
+      const itemResponse = r.getResponse();
+      if (itemName === 'Correo electrónico') {
+        //@ts-ignore
+        resp.push(itemResponse);
+      }
+    })
   })
   //@ts-ignore
   return resp;
@@ -162,10 +163,30 @@ const closeForm = (form: GoogleAppsScript.Forms.Form, triggerUid: GoogleAppsScri
   form.setAcceptingResponses(false);
   deleteTriger(triggerUid);
   scriptProperties.deleteProperty(triggerUid.toString());
-  deleteFile(form.getId());
+  // form.getDescription()
+  // form.setDescription(`${triggerUid.toString()}-/${form.getId()}`)
 }
 
+const deleteForm = () => {
+  const form = FormApp.getActiveForm()
+  const rawMessage = form.getCustomClosedFormMessage().split('\-/');
+  const triggerId = rawMessage[0];
+  const formId = rawMessage[1];
+  // @ts-ignore
+  deleteTriger(triggerId);
+  scriptProperties.deleteProperty(triggerId);
+  deleteFile(formId)
+}
 
+const closeUncompleteForm = () => {
+  const form = FormApp.getActiveForm()
+  const triggerUid = form.getCustomClosedFormMessage()
+  form.setCustomClosedFormMessage('El taller ya ha Empezado');
+  form.setAcceptingResponses(false);
+  //@ts-ignore
+  deleteTriger(triggerUid);
+  scriptProperties.deleteProperty(triggerUid.toString());
+}
 /**
  * Function that is fired whenever somoene submits a form response.
  * 
@@ -192,6 +213,7 @@ const formSubmit = (e: EventFormResponse) => {
   if (numberOfResponses < 2) {
     const values = getInitValues(form);
     storeFormData(values, triggerUidString);
+    form.setCustomClosedFormMessage(triggerUidString)
   }
 
   const { workshopName, range, meetUrl, addToCalendarUrl, limit } = getFormIdividualData(triggerUidString);
@@ -207,9 +229,13 @@ const formSubmit = (e: EventFormResponse) => {
 
   //Close the form once the limit have been reached, and send to all registrants the data of the meeting link
   if (numberOfResponses >= limit) {
-    const resp = getResponse(e.response);
-    const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
-    MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a ${workshopName}`, message);
+    form.getResponses()
+    const resp = getResponses(form.getResponses());
+    sendEmailToRegistrants(resp, workshopName, meetUrl, addToCalendarUrl)
     closeForm(form, triggerUid)
   }
+}
+const sendEmailToRegistrants = (resp: string[], workshopName: string, meetUrl: string, addToCalendarUrl: string) => {
+  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
+  MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a ${workshopName}`, message);
 }

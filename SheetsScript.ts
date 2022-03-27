@@ -34,11 +34,15 @@ const scriptProperties: GoogleAppsScript.Properties.Properties = PropertiesServi
 const resetAllValues = () => {
   scriptProperties.deleteAllProperties();
   const triggers = ScriptApp.getProjectTriggers();
+  const spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY);
+  const formsFolderId = scriptProperties.getProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY);
   triggers.forEach(t => {
     ScriptApp.deleteTrigger(t)
   })
-  DriveApp.getFolderById(FORM_SUBFOLDER_FOR_WORKSHOPS).getFiles().next().setTrashed(true)
-  DriveApp.getFolderById(SPREADSHEET_FORMS_WORKSHOPS_FOLDER_ID).getFiles().next().setTrashed(true)
+  if (spreadsheetFolderId !== null && formsFolderId !== null) {
+    DriveApp.getFolderById(formsFolderId).getFiles().next().setTrashed(true)
+    DriveApp.getFolderById(spreadsheetFolderId).getFiles().next().setTrashed(true)
+  }
 }
 /**
  * Cheks if a value is blank
