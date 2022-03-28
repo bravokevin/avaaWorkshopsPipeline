@@ -186,6 +186,10 @@ const closeUncompleteForm = () => {
   //@ts-ignore
   deleteTriger(triggerUid);
   scriptProperties.deleteProperty(triggerUid.toString());
+  ScriptApp.newTrigger('deleteForm')
+  .timeBased()
+  .at(start)
+  .create();
 }
 /**
  * Function that is fired whenever somoene submits a form response.

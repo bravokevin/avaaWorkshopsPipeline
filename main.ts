@@ -91,17 +91,17 @@ const sendScheduledWorkshops = () => {
 const main = (workshopsValuesArr: any[], subject: string, groupName: string) => {
   //getting all the necessarie values
   const processedWorkshopData = processData(workshopsValuesArr);
-  const [scheduledWOrkshops, workshopsToSendASAP] = processWorkshopType(processedWorkshopData);
+  // const [scheduledWOrkshops, workshopsToSendASAP] = processWorkshopType(processedWorkshopData);
 
   const workshopsToSendASAPFinalDataArr: WorkshopFinalData[] = []
   const scheduledWOrkshopsFinalArr = []
 
   //if there are workshops to schedule, store them in `Properties Services`
-  if (scheduledWOrkshops.length >= 1) {
-  }
+  // if (scheduledWOrkshops.length >= 1) {
+  // }
   //if there are workshops to send ASAP
-  if (workshopsToSendASAP.length >= 1) {
-    workshopsToSendASAP.forEach(w => {
+  // if (workshopsToSendASAP.length >= 1) {
+    processedWorkshopData.forEach(w => {
       //@ts-ignore
       const workshopsToSendASAPFinalDataObj: WorkshopFinalData = {}
       const [meetLink, addUrl, meetId] = calendarMain(w);
@@ -112,7 +112,7 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
 
     })
     sendEmails(workshopsToSendASAPFinalDataArr, subject, groupName);
-  }
+  // }
   //update the range from where we grab the workshops data
   updateSheetRange()
 }

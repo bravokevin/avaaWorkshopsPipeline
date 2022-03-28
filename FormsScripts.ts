@@ -150,6 +150,7 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form, start: Date) => {
     .forForm(form)
     .onFormSubmit()
     .create();
+    //guardar el id del trigger, para poder borrarlo despues.
   ScriptApp.newTrigger('closeUncompleteForm')
     .timeBased()
     .at(start)
