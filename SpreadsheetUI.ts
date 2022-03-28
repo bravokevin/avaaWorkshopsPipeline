@@ -16,6 +16,7 @@ const onOpen = () => {
   ui.createMenu('Para enviar Talleres')
     .addItem('Iniciar!', 'init')
     .addItem('Enviar talleres', 'sendWorkshop')
+    .addItem('Suspender Taller', 'suspendWorkshop')
     .addToUi();
 }
 
@@ -64,6 +65,5 @@ const sendWorkshop = () => {
   }
   scriptProperties.setProperty(LAST_WORKSHOP_PROPWETY_KEY, values[0][0].toString())
   //Once finished inform throught the UI that the process was completed succesfully
-  SpreadsheetApp.getUi()
-    .alert(`Los talleres: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n han sido enviados exitosamente!!`);
+    ui.alert(`Los talleres: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n han sido enviados exitosamente!!`);
 }
