@@ -14,6 +14,7 @@ const LAST_WORKSHOP_PROPWETY_KEY = "last_workshop_property";
 const onOpen = () => {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('Para enviar Talleres')
+    .addItem('Iniciar!', 'init')
     .addItem('Enviar talleres', 'sendWorkshop')
     .addToUi();
 }

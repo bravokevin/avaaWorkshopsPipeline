@@ -96,24 +96,23 @@ const createSpreadSheet = (month: string) => {
 }
 
 /**
+ * It creates all the initial folders and files, necesaries to start working 
  * 
- * @param fromCustomMenu 
  * @see {@link https://developers.google.com/apps-script/reference/properties/properties#getproperties} for reference about storing data in bulk
  */
-const init = (fromCustomMenu: boolean = false) => {
+const init = () => {
 
-  if (fromCustomMenu === true) {
-    const mainFolder = DriveApp.createFolder("Talleres AVAA");
-    const spreadsheetSubfolder = mainFolder.createFolder("Registro de Becarios en Talleres");
-    const formFubfolder = mainFolder.createFolder("Formularios Para Talleres");
-    const templateFormId = createTemplateForm(mainFolder);
-    scriptProperties.setProperties({
-      TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY: templateFormId,
-      FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY: formFubfolder.getId(),
-      SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY: spreadsheetSubfolder.getId(),
-      MAIN_FOLDER_PROPERTY_KEY: spreadsheetSubfolder.getId()
-    })
-  }
+  const mainFolder = DriveApp.createFolder("Talleres AVAA");
+  const spreadsheetSubfolder = mainFolder.createFolder("Registro de Becarios en Talleres");
+  const formFubfolder = mainFolder.createFolder("Formularios Para Talleres");
+  const templateFormId = createTemplateForm(mainFolder);
+  scriptProperties.setProperties({
+    TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY: templateFormId,
+    FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY: formFubfolder.getId(),
+    SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY: spreadsheetSubfolder.getId(),
+    MAIN_FOLDER_PROPERTY_KEY: spreadsheetSubfolder.getId()
+  })
+
 }
 
 const restoreFolder = () => {
@@ -127,7 +126,7 @@ const restoreFolder = () => {
   let templateFormId: string;
   let spreadsheetSubfolder: GoogleAppsScript.Drive.Folder;
 
-  if (mainFolderid === null && spreadsheetsId === null && formsSubfolderId === null && formTemplate) init(true);
+  if (mainFolderid === null && spreadsheetsId === null && formsSubfolderId === null && formTemplate) init();
 
   else {
     try {
