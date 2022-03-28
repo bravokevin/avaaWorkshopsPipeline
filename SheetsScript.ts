@@ -37,11 +37,11 @@ const resetAllValues = () => {
   const spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY);
   const formsFolderId = scriptProperties.getProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY);
   triggers.forEach(t => {
-    ScriptApp.deleteTrigger(t)
+    ScriptApp.deleteTrigger(t);
   })
   if (spreadsheetFolderId !== null && formsFolderId !== null) {
-    DriveApp.getFolderById(formsFolderId).getFiles().next().setTrashed(true)
-    DriveApp.getFolderById(spreadsheetFolderId).getFiles().next().setTrashed(true)
+    DriveApp.getFolderById(formsFolderId).getFiles().next().setTrashed(true);
+    DriveApp.getFolderById(spreadsheetFolderId).getFiles().next().setTrashed(true);
   }
 }
 /**
