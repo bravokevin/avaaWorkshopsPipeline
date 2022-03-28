@@ -28,7 +28,9 @@ const COLUMN_FOR_MEETING_ID = 'R'
  */
 const COLUMN_FOR_MEETING_PASSWORD = 'S'
 
-
+/**
+ * The column in where we set and get the workshop form url
+ */
 const COLUMN_FOR_FORM_URL = 'T'
 
 
@@ -41,7 +43,7 @@ const COLUMN_FOR_FORM_URL = 'T'
  * @param meetingId the meeting Id
  * @param meetingPassword (optional) the meeting password
  */
-const setMeeetingValues = (rangeNumber: number, meetingUrl: string, meetingId: string, formUrl: string, meetingPassword?: string) => {
+const setValuesToSpreadsheet = (rangeNumber: number, meetingUrl: string, meetingId: string, formUrl: string, meetingPassword?: string) => {
   const rangeForMeetingUrl = `${COLUMN_FOR_MEETING_URL}${rangeNumber}`
   const cellForMeetingUrl = sheet.getRange(rangeForMeetingUrl)
 
@@ -56,8 +58,8 @@ const setMeeetingValues = (rangeNumber: number, meetingUrl: string, meetingId: s
 
   cellForMeetingUrl.setValue(meetingUrl);
   cellForMeetingId.setValue(meetingId);
-  cellForMeetingPassword.setValue(meetingPassword);
   cellForFormUrl.setValue(formUrl)
+  cellForMeetingPassword.setValue(meetingPassword);
 
 }
 
@@ -105,7 +107,7 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
       const [meetLink, addUrl, meetId] = calendarMain(w);
       workshopsToSendASAPFinalDataObj.workshop = w;
       [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
-      setMeeetingValues(w.id, meetLink, meetId, workshopsToSendASAPFinalDataObj.completeFormUrl);
+      setValuesToSpreadsheet(w.id, meetLink, meetId, workshopsToSendASAPFinalDataObj.completeFormUrl);
       workshopsToSendASAPFinalDataArr.push(workshopsToSendASAPFinalDataObj)
 
     })
