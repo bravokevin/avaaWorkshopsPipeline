@@ -17,6 +17,7 @@ const onOpen = () => {
     .addItem('Iniciar!', 'init')
     .addItem('Enviar talleres', 'sendWorkshop')
     .addItem('Suspender Taller', 'suspendWorkshop')
+    .addItem('Crear Mensaje', 'createWhatsAppMessage')
     .addToUi();
 }
 

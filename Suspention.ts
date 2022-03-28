@@ -27,7 +27,10 @@ const suspendWorkshop = () => {
         form = FormApp.openByUrl(result.getResponseText())
     }
     catch (e) {
-        ui.alert("Error: El enlace que introduciste es invalido", "Por favor, coloca un enlace de formulario valido ", ui.ButtonSet.OK);
+        ui.alert("Error: El enlace que introduciste es invalido",
+            "Por favor, coloca un enlace de formulario valido ",
+            ui.ButtonSet.OK
+        );
         return;
     }
     const workshopName = form.getTitle();
