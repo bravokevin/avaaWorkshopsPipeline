@@ -148,8 +148,7 @@ const createCalendarDescription = (
   meetingPassword?: string
 ): string => {
 
-  const calendarDescription = `
-<b>Competencia Asociada:</b> ${pensum} 
+  const calendarDescription = `<b>Competencia Asociada:</b> ${pensum} 
 <b>Facilitador:</b> ${speaker} 
 <b>Modalidad:</b> ${kindOfWorkshop}
 ${kindOfWorkshop === "Presencial" ? '<b>Lugar:</b> Oficinas de AVAA ' :
@@ -227,7 +226,7 @@ const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?
   const calendarStartDate = startDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
   const calendarEndDate = endDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
 
-  const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}`
+  const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location.toString()}`
 
   // `http://www.google.com/calendar/event?action=TEMPLATE&text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}` this is for open the mobile app rather than the browser
 
