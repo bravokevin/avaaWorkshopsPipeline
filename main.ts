@@ -113,7 +113,9 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
     if (w.kindOfWorkshop === "Presencial") {
       const [addUrl] = calendarMain(w)
       workshopsToSendASAPFinalDataObj.workshop = w;
-      [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
+      const [formUrl, completeFormUrl, submitTigger] = createForm(w, addUrl);
+      workshopsToSendASAPFinalDataObj.formUrl = formUrl
+      workshopsToSendASAPFinalDataObj.completeFormUrl = completeFormUrl
       setValuesToSpreadsheet(w.id, workshopsToSendASAPFinalDataObj.completeFormUrl);
     }
     else {

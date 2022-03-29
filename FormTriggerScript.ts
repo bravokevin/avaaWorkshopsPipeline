@@ -106,7 +106,7 @@ const getFormIdividualData = (key: string): IndividualFormData => {
 const deleteTriger = (triggerUid: GoogleAppsScript.Script.Trigger) => {
   const triggers = ScriptApp.getProjectTriggers();
   triggers.forEach(t => {
-    if (t.getUniqueId() === triggerUid.toString()) {
+    if (t === triggerUid.toString()) {
       ScriptApp.deleteTrigger(triggerUid)
     }
   })
@@ -186,20 +186,20 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleA
 const closeForm = (form: GoogleAppsScript.Forms.Form, triggerUid: GoogleAppsScript.Script.Trigger) => {
   form.setAcceptingResponses(false);
   form.setCustomClosedFormMessage('Cupos agotados!');
-  const {uncompleteTrigger,end} = getFormIdividualData(triggerUid.getUniqueId())
+  const { uncompleteTrigger, end } = getFormIdividualData(triggerUid)
   deleteTriger(uncompleteTrigger!);
   const deleteTrigger = createTrigger(form, "delete", new Date(end!))
-  const obj:IndividualFormData ={
+  const obj: IndividualFormData = {
     deleteTrigger
   }
-  storeFormData(obj, triggerUid.getUniqueId());
-  form.setDescription(`${triggerUid.getUniqueId()}`)
+  storeFormData(obj, triggerUid);
+  form.setDescription(`${triggerUid}`)
 }
 
 const deleteForm = () => {
   const form = FormApp.getActiveForm()
   const submitTriggerId = form.getDescription();
-  const {deleteTrigger} = getFormIdividualData(submitTriggerId)
+  const { deleteTrigger } = getFormIdividualData(submitTriggerId)
 
   scriptProperties.deleteProperty(submitTriggerId);
   // @ts-ignore
@@ -230,7 +230,7 @@ const uncompleteForm = () => {
   storeFormData(obj, submitTrigger!)
   //@ts-ignore
   deleteTriger(uncompleteTrigger);
-  createTrigger(form, "delete", new Date(end))
+  createTrigger(form, "delete", new Date(end!))
 }
 /**
  * Function that is fired whenever somoene submits a form response.

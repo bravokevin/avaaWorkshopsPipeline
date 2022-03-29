@@ -23,28 +23,24 @@ const createFormDescription = (workshop: Workshop, whatsapp: boolean = false) =>
   const { name, pensum, date, startHour, endHour, speaker, kindOfWorkshop, platform, description } = workshop;
   if (whatsapp === false) {
     const formDescription = `Taller: ${name}
-  Competencia: ${pensum}
-  Fecha: ${date}
-  Horario: de ${startHour} hasta las ${endHour}
-  Facilitador: ${speaker}
-  Modalidad: ${kindOfWorkshop}
-  ${kindOfWorkshop === "Presencial" ? 'Lugar: Oficinas de Avaa' : `Plataforma: ${platform}`}
-  ${description === ' ' ? '' : `\n ${description}`}
-  `;
+Competencia: ${pensum}
+Fecha: ${date}
+Horario: de ${startHour} hasta las ${endHour}
+Facilitador: ${speaker}
+Modalidad: ${kindOfWorkshop}
+${kindOfWorkshop === "Presencial" ? 'Lugar: Oficinas de Avaa' : `Plataforma: ${platform}`}
+${description === ' ' ? '' : `\n ${description}`}`;
     return formDescription;
-
-
   }
-  else (whatsapp === true) {
+  else {
     const formDescription = `*Taller:* ${name}
-  *Competencia:* ${pensum}
-  *Fecha:* ${date}
-  *Horario:* de ${startHour} hasta las ${endHour}
-  *Facilitador:* ${speaker}
-  *Modalidad:* ${kindOfWorkshop}
-  ${kindOfWorkshop === "Presencial" ? '*Lugar:* Oficinas de Avaa' : `*Plataforma:* ${platform}`}
-  ${description === ' ' ? '' : `\n ${description}`}
-  `;
+*Competencia:* ${pensum}
+*Fecha:* ${date}
+*Horario:* de ${startHour} hasta las ${endHour}
+*Facilitador:* ${speaker}
+*Modalidad:* ${kindOfWorkshop}
+${kindOfWorkshop === "Presencial" ? '*Lugar:* Oficinas de Avaa' : `*Plataforma:* ${platform}`}
+${description === ' ' ? '' : `\n ${description}`}`;
     return formDescription;
   }
 
@@ -217,17 +213,17 @@ const createForm = (data: Workshop, addUrl: string) => {
   //stores the id and the "add to my calendar url"
   form.setCustomClosedFormMessage(id + '-/' + addUrl);
   //creates a trigger 'onFormSubmit' for every form.
-  const submiTrigger = createTrigger(form, "submit");
+  const submitTrigger = createTrigger(form, "submit");
   const closeForm = createTrigger(form, "uncomplete", new Date(start));
   const end = new Date(new Date(date + endHour).getTime() + 600000).toDateString();
   const triggersData: IndividualFormData = {
-    submitTrigger: submiTrigger,
+    submitTrigger,
     uncompleteTrigger: closeForm,
     end
   }
-  form.setCustomClosedFormMessage(id + '-/' + addUrl + '-/' + submiTrigger);
+  form.setCustomClosedFormMessage(id + '-/' + addUrl + '-/' + submitTrigger);
 
-  storeFormData(triggersData, submiTrigger);
+  storeFormData(triggersData, submitTrigger);
 
   const formUrl = form.getPublishedUrl();
   const formShortenUrl = form.shortenFormUrl(formUrl);
@@ -238,7 +234,7 @@ const createForm = (data: Workshop, addUrl: string) => {
   SpreadsheetApp.flush();
   setSheetName(ss, name);
 
-  return [formShortenUrl, formUrl];
+  return [formShortenUrl, formUrl, submitTrigger];
 }
 
 /**

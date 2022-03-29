@@ -222,11 +222,12 @@ const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?
   const NDescription = createCalendarDescription(pensum, speaker, kindOfWorkshop, platform, description, meetingLink, meetingId, meetingPasword)
 
   const [startDate, endDate] = getFormatedDate(date, startHour, endHour)
-  const EncodeDescription = encodeURIComponent(NDescription)
+  const encodedLocation = encodeURIComponent(location)
+  const encodeDescription = encodeURIComponent(NDescription)
   const calendarStartDate = startDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
   const calendarEndDate = endDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
 
-  const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location.toString()}`
+  const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${encodeDescription}&location=${encodedLocation}`
 
   // `http://www.google.com/calendar/event?action=TEMPLATE&text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}` this is for open the mobile app rather than the browser
 
