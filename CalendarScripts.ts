@@ -102,7 +102,7 @@ const createEventObject = (name: string, kindOfWorkshop: KindOfWorkshop, platfor
  * 
  * @returns the deafults calendar id or {@linkcode CALENDAR_ID}
  */
- const getCalendarId= () => {
+const getCalendarId = () => {
   let calendarId: string = '';
   if (CalendarApp.getCalendarById(CALENDAR_ID) === null) {
     calendarId = CalendarApp.getDefaultCalendar().getId();
@@ -152,8 +152,8 @@ const createCalendarDescription = (
 <b>Competencia Asociada:</b> ${pensum} 
 <b>Facilitador:</b> ${speaker} 
 <b>Modalidad:</b> ${kindOfWorkshop}
-${kindOfWorkshop === "Presencial" ? '' :
-`<b>Plataforma:</b> ${platform}
+${kindOfWorkshop === "Presencial" ? '<b>Lugar:</b> Oficinas de AVAA ' :
+      `<b>Plataforma:</b> ${platform}
 <b>Link de la reunion:</b> ${meetingLink}
 <b>Id de la reunion:</b> ${meetingId}
 ${platform === 'Zoom' ? `<b>Contraseña de la reunion:</b> ${meetingPassword}` : ''}`
@@ -215,12 +215,12 @@ const getMeetEventLink = (eventId: string): string[] => {
  * @param meetingId the meeting id
  * @returns an 'Add to my calendar' link
  */
-const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?: string) => {
+const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?: string, meetingPasword?: string) => {
 
   const { name, description, speaker, pensum, kindOfWorkshop, platform, date, startHour, endHour } = workshop;
   const location = meetingLink ? meetingLink : 'Oficinas de AAVA'
   const calendarName = encodeURIComponent(name)
-  const NDescription = createCalendarDescription(pensum, speaker, kindOfWorkshop, platform, description, meetingLink, meetingId)
+  const NDescription = createCalendarDescription(pensum, speaker, kindOfWorkshop, platform, description, meetingLink, meetingId, meetingPasword)
 
   const [startDate, endDate] = getFormatedDate(date, startHour, endHour)
   const EncodeDescription = encodeURIComponent(NDescription)

@@ -82,8 +82,8 @@ const createSpreadSheet = (month: string) => {
   let spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY)
   let spreadSheetWorkshopsFolder: GoogleAppsScript.Drive.Folder;
   // try {
-    spreadSheetWorkshopsFolder = DriveApp.getFolderById(spreadsheetFolderId!);
-    ssFile.moveTo(spreadSheetWorkshopsFolder)
+  spreadSheetWorkshopsFolder = DriveApp.getFolderById(spreadsheetFolderId!);
+  ssFile.moveTo(spreadSheetWorkshopsFolder)
   // }
   // catch (e) {
   //   // restoreFolder()
@@ -106,13 +106,11 @@ const init = () => {
   const spreadsheetSubfolder = mainFolder.createFolder("Registro de Becarios en Talleres");
   const formFubfolder = mainFolder.createFolder("Formularios Para Talleres");
   const templateFormId = createTemplateForm(mainFolder);
-  scriptProperties.setProperties({
-    TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY: templateFormId,
-    FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY: formFubfolder.getId(),
-    SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY: spreadsheetSubfolder.getId(),
-    MAIN_FOLDER_PROPERTY_KEY: spreadsheetSubfolder.getId()
-  })
-
+  TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY
+  scriptProperties.setProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY, templateFormId)
+  scriptProperties.setProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY, spreadsheetSubfolder.getId())
+  scriptProperties.setProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY, formFubfolder.getId())
+  scriptProperties.setProperty(MAIN_FOLDER_PROPERTY_KEY,spreadsheetSubfolder.getId())
 }
 
 // const restoreFolder = () => {

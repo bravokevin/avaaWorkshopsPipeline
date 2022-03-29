@@ -43,7 +43,7 @@ const COLUMN_FOR_FORM_URL = 'T'
  * @param meetingId the meeting Id
  * @param meetingPassword (optional) the meeting password
  */
-const setValuesToSpreadsheet = (rangeNumber: number, meetingUrl: string, meetingId: string, formUrl: string, meetingPassword?: string) => {
+const setValuesToSpreadsheet = (rangeNumber: number, formUrl: string, meetingUrl?: string, meetingId?: string, meetingPassword?: string) => {
   const rangeForMeetingUrl = `${COLUMN_FOR_MEETING_URL}${rangeNumber}`
   const cellForMeetingUrl = sheet.getRange(rangeForMeetingUrl)
 
@@ -71,9 +71,15 @@ const setValuesToSpreadsheet = (rangeNumber: number, meetingUrl: string, meeting
  */
 const calendarMain = (workshop: Workshop) => {
   const eventId = createEvent(workshop)
-  const [meetLink, meetId] = getMeetEventLink(eventId!);
-  const addUrl = getPublicEventLink(workshop, meetLink, meetId);
-  return [meetLink, addUrl, meetId]
+  if (workshop.kindOfWorkshop === "Presencial") {
+    const addUrl = getPublicEventLink(workshop);
+    return [addUrl]
+  }
+  else {
+    const [meetLink, meetId] = getMeetEventLink(eventId!);
+    const addUrl = getPublicEventLink(workshop, meetLink, meetId);
+    return [addUrl, meetLink, meetId]
+  }
 }
 
 const sendScheduledWorkshops = () => {
@@ -101,17 +107,26 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
   // }
   //if there are workshops to send ASAP
   // if (workshopsToSendASAP.length >= 1) {
-    processedWorkshopData.forEach(w => {
-      //@ts-ignore
-      const workshopsToSendASAPFinalDataObj: WorkshopFinalData = {}
-      const [meetLink, addUrl, meetId] = calendarMain(w);
+  processedWorkshopData.forEach(w => {
+    //@ts-ignore
+    const workshopsToSendASAPFinalDataObj: WorkshopFinalData = {}
+    if (w.kindOfWorkshop === "Presencial") {
+      const [addUrl] = calendarMain(w)
+      workshopsToSendASAPFinalDataObj.workshop = w;
+      [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
+      setValuesToSpreadsheet(w.id, workshopsToSendASAPFinalDataObj.completeFormUrl);
+    }
+    else {
+      const [addUrl, meetLink, meetId] = calendarMain(w);
       workshopsToSendASAPFinalDataObj.workshop = w;
       [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
       setValuesToSpreadsheet(w.id, meetLink, meetId, workshopsToSendASAPFinalDataObj.completeFormUrl);
-      workshopsToSendASAPFinalDataArr.push(workshopsToSendASAPFinalDataObj)
+    }
 
-    })
-    sendEmails(workshopsToSendASAPFinalDataArr, subject, groupName);
+    workshopsToSendASAPFinalDataArr.push(workshopsToSendASAPFinalDataObj)
+
+  })
+  sendEmails(workshopsToSendASAPFinalDataArr, subject, groupName);
   // }
   //update the range from where we grab the workshops data
   updateSheetRange()

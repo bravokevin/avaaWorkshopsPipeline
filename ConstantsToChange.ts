@@ -5,7 +5,7 @@ const CALENDAR_ID = "f9ch4fca765f9ggg9emuks83h0@group.calendar.google.com"
 /**
  * The key under where the Form template for workshops id is going to be stored in {@linkcode scriptProperties}
  */
-const TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY = '1J2p6WBr8POFKb6aTWzolWOvVkC8odpgOur5MLiilMKo'
+const TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY = 'template_form_for_w'
 
 /**
  * The key under where the subfolder for storing the forms of every workshop is going to be stored in {@linkcode scriptProperties}

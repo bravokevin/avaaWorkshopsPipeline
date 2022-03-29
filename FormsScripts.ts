@@ -215,7 +215,7 @@ const createForm = (data: Workshop, addUrl: string) => {
   form.setConfirmationMessage(confirmationMessage);
   form.setTitle(name);
   //stores the id and the "add to my calendar url"
-  form.setCustomClosedFormMessage(id + '-/' + addUrl + '-/');
+  form.setCustomClosedFormMessage(id + '-/' + addUrl);
   //creates a trigger 'onFormSubmit' for every form.
   const submiTrigger = createTrigger(form, "submit");
   const closeForm = createTrigger(form, "uncomplete", new Date(start));
@@ -266,9 +266,10 @@ const createTemplateForm = (destinationFolder: GoogleAppsScript.Drive.Folder) =>
   form.addTextItem().setTitle('Appellidos').setRequired(true);
   form.addTextItem().setTitle('Nombres').setRequired(true);
   form.addTextItem().setTitle('Correo electrónico').setRequired(true);
+  const formId = form.getId()
   // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');
   // form.addTextItem().setTitle('Cedula de Identidad')
-  const file = DriveApp.getFileById(form.getId())
+  const file = DriveApp.getFileById(formId)
   file.moveTo(destinationFolder)
-  return form.getId();
+  return formId;
 }
