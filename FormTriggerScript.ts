@@ -20,11 +20,16 @@ type EventFormResponse = {
 }
 
 type IndividualFormData = {
-  workshopName: string;
-  range: string;
-  meetUrl: string;
-  addToCalendarUrl: string;
-  limit: number;
+  workshopName?: string;
+  range?: string;
+  meetUrl?: string;
+  addToCalendarUrl?: string;
+  limit?: number;
+  submitTrigger?: string;
+  deleteTrigger?: string;
+  uncompleteTrigger?: string;
+  unfull?: boolean;
+  end?: string;
 }
 
 type RegistrantData = { name: string, email: string }
@@ -44,10 +49,13 @@ const getInitValues = (form: GoogleAppsScript.Forms.Form) => {
   const workshopName = form.getTitle()
   const range = rawMessage[0];
   const addToCalendarUrl = rawMessage[1];
+  const submitTriggerId = rawMessage[2];
   const meetRange = COLUMN_FOR_MEETING_URL + range
   const limitRange = COLUMN_FOR_THE_LIMIT_DATA + range
   const meetUrl = sheet.getRange(meetRange).getValue()
-  const limit = sheet.getRange(limitRange).getValue()
+  const limit = sheet.getRange(limitRange).getValue();
+  const unfull = false;
+  const { uncompleteTrigger, submitTrigger, end } = getFormIdividualData(submitTriggerId)
 
   const values: IndividualFormData = {
     workshopName,
@@ -55,6 +63,10 @@ const getInitValues = (form: GoogleAppsScript.Forms.Form) => {
     meetUrl,
     addToCalendarUrl,
     limit,
+    unfull,
+    uncompleteTrigger,
+    submitTrigger,
+    end
   };
   return values;
 }
@@ -135,11 +147,11 @@ Si gustas, puedes agregar este evento a tu calendario con este link ${addToCalen
  * @param response the form response object of an entry
  * @returns the name and the email of a registrant
  */
-const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[]) => {
-  let resp: string[];
-
-  responses.forEach(response => {
-    response.getItemResponses().forEach(r => {
+const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleAppsScript.Forms.FormResponse, individual: boolean) => {
+  let resp: string[] = [];
+  if (individual === true) {
+    //@ts-ignore
+    responses.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
       const itemName = r.getItem().getTitle();
       const itemResponse = r.getResponse();
       if (itemName === 'Correo electrónico') {
@@ -147,9 +159,22 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[]) => {
         resp.push(itemResponse);
       }
     })
-  })
-  //@ts-ignore
-  return resp;
+    return resp;
+  }
+  else {
+    //@ts-ignore
+    responses.forEach(response => {
+      response.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
+        const itemName = r.getItem().getTitle();
+        const itemResponse = r.getResponse();
+        if (itemName === 'Correo electrónico') {
+          resp.push(itemResponse);
+        }
+      })
+    })
+    return resp;
+  }
+
 }
 
 /**
@@ -159,37 +184,53 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[]) => {
  * @param triggerUid the trigger id of the `onFormSubmit `trigger to delete
  */
 const closeForm = (form: GoogleAppsScript.Forms.Form, triggerUid: GoogleAppsScript.Script.Trigger) => {
-  form.setCustomClosedFormMessage('Cupos agotados!');
   form.setAcceptingResponses(false);
-  deleteTriger(triggerUid);
-  scriptProperties.deleteProperty(triggerUid.toString());
-  // form.getDescription()
-  // form.setDescription(`${triggerUid.toString()}-/${form.getId()}`)
+  form.setCustomClosedFormMessage('Cupos agotados!');
+  const {uncompleteTrigger,end} = getFormIdividualData(triggerUid.getUniqueId())
+  deleteTriger(uncompleteTrigger!);
+  const deleteTrigger = createTrigger(form, "delete", new Date(end!))
+  const obj:IndividualFormData ={
+    deleteTrigger
+  }
+  storeFormData(obj, triggerUid.getUniqueId());
+  form.setDescription(`${triggerUid.getUniqueId()}`)
 }
 
 const deleteForm = () => {
   const form = FormApp.getActiveForm()
-  const rawMessage = form.getCustomClosedFormMessage().split('\-/');
-  const triggerId = rawMessage[0];
-  const formId = rawMessage[1];
+  const submitTriggerId = form.getDescription();
+  const {deleteTrigger} = getFormIdividualData(submitTriggerId)
+
+  scriptProperties.deleteProperty(submitTriggerId);
   // @ts-ignore
-  deleteTriger(triggerId);
-  scriptProperties.deleteProperty(triggerId);
-  deleteFile(formId)
+  deleteTriger(submitTriggerId);
+  deleteTriger(deleteTrigger);
+  deleteFile(form.getId())
 }
 
-const closeUncompleteForm = () => {
+
+
+/**
+ * 
+ * Si un formulario se cierra por que no queadn cupos lo que se hace es que, se deja abierto, pero se le manda a las personas que ya estan inscritas la info para acceder a la reunion.
+ * 
+ * y con cada nueva entrada se le envia a la persona un correo con la info 
+ */
+const uncompleteForm = () => {
   const form = FormApp.getActiveForm()
-  const triggerUid = form.getCustomClosedFormMessage()
-  form.setCustomClosedFormMessage('El taller ya ha Empezado');
-  form.setAcceptingResponses(false);
+  const rawMessage = form.getCustomClosedFormMessage()
+
+  let { uncompleteTrigger, workshopName, range, meetUrl, addToCalendarUrl, limit, unfull, submitTrigger, end } = getFormIdividualData(rawMessage)
+
+  unfull = true
+
+  const obj = {
+    workshopName, range, meetUrl, addToCalendarUrl, limit, unfull, end
+  }
+  storeFormData(obj, submitTrigger!)
   //@ts-ignore
-  deleteTriger(triggerUid);
-  scriptProperties.deleteProperty(triggerUid.toString());
-  ScriptApp.newTrigger('deleteForm')
-  .timeBased()
-  .at(start)
-  .create();
+  deleteTriger(uncompleteTrigger);
+  createTrigger(form, "delete", new Date(end))
 }
 /**
  * Function that is fired whenever somoene submits a form response.
@@ -220,10 +261,9 @@ const formSubmit = (e: EventFormResponse) => {
     form.setCustomClosedFormMessage(triggerUidString)
   }
 
-  const { workshopName, range, meetUrl, addToCalendarUrl, limit } = getFormIdividualData(triggerUidString);
-
+  const { workshopName, range, meetUrl, addToCalendarUrl, limit, unfull } = getFormIdividualData(triggerUidString);
   //updates the value of the current number of registrants in the main spreadsheet.
-  const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
+  const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range!;
   sheet.getRange(cellForUpdate).setValue(numberOfResponses);
 
   SpreadsheetApp.flush()
@@ -232,10 +272,12 @@ const formSubmit = (e: EventFormResponse) => {
   //sends the confirmation message for every registrant.
 
   //Close the form once the limit have been reached, and send to all registrants the data of the meeting link
-  if (numberOfResponses >= limit) {
-    form.getResponses()
-    const resp = getResponses(form.getResponses());
-    sendEmailToRegistrants(resp, workshopName, meetUrl, addToCalendarUrl)
+  if (numberOfResponses >= limit!) {
+    if (unfull === false) {
+      form.getResponses()
+      const resp = getResponses(form.getResponses(), false);
+      sendEmailToRegistrants(resp, workshopName!, meetUrl!, addToCalendarUrl!)
+    }
     closeForm(form, triggerUid)
   }
 }

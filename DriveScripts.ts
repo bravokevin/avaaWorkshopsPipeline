@@ -26,39 +26,39 @@ const deleteFile = (FileId: string) => {
  * @see {@link https://developers.google.com/apps-script/reference/drive/file} for reference about DriveApp 'File' Class
  */
 const copyForm = (workshopName: string): string => {
-  let templateWorkshopForm: GoogleAppsScript.Drive.File;
-  let subfolder: GoogleAppsScript.Drive.Folder;
-  let formCopyFile: GoogleAppsScript.Drive.File;
-  let formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+  const formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
   const formsSubfolderId = scriptProperties.getProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY)
-
-  //in the case does not exist in the propertie service.
-  if (formId === null) {
-    restoreFolder()
-    formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
-  }
-  //in the case the form has been deleted
-  try {
-    templateWorkshopForm = DriveApp.getFileById(formId!);
-  }
-  catch (e) {
-    restoreFolder()
-    formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
-    templateWorkshopForm = DriveApp.getFileById(formId!);
-    Logger.log(e)
-  }
-  try {
-    subfolder = DriveApp.getFolderById(formsSubfolderId!);
-    formCopyFile = templateWorkshopForm.makeCopy(workshopName, subfolder);
-  }
-  catch (e) {
-    restoreFolder()
-    subfolder = DriveApp.getFolderById(formsSubfolderId!);
-    formCopyFile = templateWorkshopForm.makeCopy(workshopName, subfolder);
-    Logger.log(e)
-  }
+  const templateWorkshopForm = DriveApp.getFileById(formId!);
+  const subfolder = DriveApp.getFolderById(formsSubfolderId!);
+  const formCopyFile = templateWorkshopForm.makeCopy(workshopName, subfolder);
   const formCopyFileId = formCopyFile.getId();
   return formCopyFileId;
+  // //in the case does not exist in the propertie service.
+  // if (formId === null) {
+  //   // restoreFolder()
+  //   formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+  // }
+  // //in the case the form has been deleted
+  // try {
+  //   templateWorkshopForm = DriveApp.getFileById(formId!);
+  // }
+  // catch (e) {
+  //   // restoreFolder()
+  //   formId = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+  //   templateWorkshopForm = DriveApp.getFileById(formId!);
+  //   Logger.log(e)
+  // }
+  // try {
+  //   subfolder = DriveApp.getFolderById(formsSubfolderId!);
+  //   formCopyFile = templateWorkshopForm.makeCopy(workshopName, subfolder);
+  // }
+  // catch (e) {
+  //   // restoreFolder()
+  //   subfolder = DriveApp.getFolderById(formsSubfolderId!);
+  //   formCopyFile = templateWorkshopForm.makeCopy(workshopName, subfolder);
+  //   Logger.log(e)
+  // }
+
 }
 
 /**
@@ -81,17 +81,17 @@ const createSpreadSheet = (month: string) => {
   const ssFile = DriveApp.getFileById(ss.getId())
   let spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY)
   let spreadSheetWorkshopsFolder: GoogleAppsScript.Drive.Folder;
-  try {
+  // try {
     spreadSheetWorkshopsFolder = DriveApp.getFolderById(spreadsheetFolderId!);
     ssFile.moveTo(spreadSheetWorkshopsFolder)
-  }
-  catch (e) {
-    restoreFolder()
-    spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY)
-    spreadSheetWorkshopsFolder = DriveApp.getFolderById(spreadsheetFolderId!);
-    ssFile.moveTo(spreadSheetWorkshopsFolder)
-    Logger.log(e)
-  }
+  // }
+  // catch (e) {
+  //   // restoreFolder()
+  //   // spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY)
+  //   // spreadSheetWorkshopsFolder = DriveApp.getFolderById(spreadsheetFolderId!);
+  //   // ssFile.moveTo(spreadSheetWorkshopsFolder)
+  //   Logger.log(e)
+  // }
   return ss
 }
 
@@ -115,50 +115,50 @@ const init = () => {
 
 }
 
-const restoreFolder = () => {
-  const mainFolderid = scriptProperties.getProperty(MAIN_FOLDER_PROPERTY_KEY);
-  const spreadsheetsId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY);
-  const formsSubfolderId = scriptProperties.getProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY);
-  const formTemplate = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
+// const restoreFolder = () => {
+//   const mainFolderid = scriptProperties.getProperty(MAIN_FOLDER_PROPERTY_KEY);
+//   const spreadsheetsId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY);
+//   const formsSubfolderId = scriptProperties.getProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY);
+//   const formTemplate = scriptProperties.getProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY);
 
-  let mainFolder: GoogleAppsScript.Drive.Folder;
-  let formFubfolder: GoogleAppsScript.Drive.Folder;
-  let templateFormId: string;
-  let spreadsheetSubfolder: GoogleAppsScript.Drive.Folder;
+//   let mainFolder: GoogleAppsScript.Drive.Folder;
+//   let formFubfolder: GoogleAppsScript.Drive.Folder;
+//   let templateFormId: string;
+//   let spreadsheetSubfolder: GoogleAppsScript.Drive.Folder;
 
-  if (mainFolderid === null && spreadsheetsId === null && formsSubfolderId === null && formTemplate) init();
+//   if (mainFolderid === null && spreadsheetsId === null && formsSubfolderId === null && formTemplate) init();
 
-  else {
-    try {
-      DriveApp.getFolderById(mainFolderid!);
-    }
-    catch (error) {
-      mainFolder = DriveApp.createFolder("Talleres AVAA");
-      scriptProperties.setProperty(MAIN_FOLDER_PROPERTY_KEY, mainFolder.getId())
-    }
-    try {
-      DriveApp.getFolderById(spreadsheetsId!);
-    }
-    catch (error) {
-      spreadsheetSubfolder = mainFolder!.createFolder("Registro de Becarios en Talleres");
-      scriptProperties.setProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY, spreadsheetSubfolder.getId())
+//   else {
+//     try {
+//       DriveApp.getFolderById(mainFolderid!);
+//     }
+//     catch (error) {
+//       mainFolder = DriveApp.createFolder("Talleres AVAA");
+//       scriptProperties.setProperty(MAIN_FOLDER_PROPERTY_KEY, mainFolder.getId())
+//     }
+//     try {
+//       DriveApp.getFolderById(spreadsheetsId!);
+//     }
+//     catch (error) {
+//       spreadsheetSubfolder = mainFolder!.createFolder("Registro de Becarios en Talleres");
+//       scriptProperties.setProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY, spreadsheetSubfolder.getId())
 
-    }
-    try {
-      DriveApp.getFolderById(formsSubfolderId!);
+//     }
+//     try {
+//       DriveApp.getFolderById(formsSubfolderId!);
 
-    }
-    catch (error) {
-      formFubfolder = mainFolder!.createFolder("Formularios Para Talleres");
-      scriptProperties.setProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY, formFubfolder.getId())
+//     }
+//     catch (error) {
+//       formFubfolder = mainFolder!.createFolder("Formularios Para Talleres");
+//       scriptProperties.setProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY, formFubfolder.getId())
 
-    }
-    try {
-      DriveApp.getFolderById(formTemplate!);
-    }
-    catch (error) {
-      templateFormId = createTemplateForm(mainFolder!);
-      scriptProperties.setProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY, templateFormId)
-    }
-  }
-}
+//     }
+//     try {
+//       DriveApp.getFolderById(formTemplate!);
+//     }
+//     catch (error) {
+//       templateFormId = createTemplateForm(mainFolder!);
+//       scriptProperties.setProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY, templateFormId)
+//     }
+//   }
+// }

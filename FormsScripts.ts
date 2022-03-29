@@ -19,20 +19,35 @@ const SCRIPT_PROPERTIES_FORM_KEY = 'CURRENT_FORM_DATA'
  * @param workshop - the {@linkcode Workshop} class 
  * @returns a description with all the details of the workshop
  */
-const createFormDescription = (workshop: Workshop) => {
+const createFormDescription = (workshop: Workshop, whatsapp: boolean = false) => {
   const { name, pensum, date, startHour, endHour, speaker, kindOfWorkshop, platform, description } = workshop;
+  if (whatsapp === false) {
+    const formDescription = `Taller: ${name}
+  Competencia: ${pensum}
+  Fecha: ${date}
+  Horario: de ${startHour} hasta las ${endHour}
+  Facilitador: ${speaker}
+  Modalidad: ${kindOfWorkshop}
+  ${kindOfWorkshop === "Presencial" ? 'Lugar: Oficinas de Avaa' : `Plataforma: ${platform}`}
+  ${description === ' ' ? '' : `\n ${description}`}
+  `;
+    return formDescription;
 
-  const formDescription = `Taller: ${name}
-Competencia: ${pensum}
-Fecha: ${date}
-Horario: de ${startHour} hasta las ${endHour}
-Facilitador: ${speaker}
-Modalidad: ${kindOfWorkshop}
-${kindOfWorkshop === "Presencial" ? 'Lugar: Oficinas de Avaa' : `Plataforma: ${platform}`}
-${description === ' ' ? '' : `\n ${description}`}
-`;
 
-  return formDescription;
+  }
+  else (whatsapp === true) {
+    const formDescription = `*Taller:* ${name}
+  *Competencia:* ${pensum}
+  *Fecha:* ${date}
+  *Horario:* de ${startHour} hasta las ${endHour}
+  *Facilitador:* ${speaker}
+  *Modalidad:* ${kindOfWorkshop}
+  ${kindOfWorkshop === "Presencial" ? '*Lugar:* Oficinas de Avaa' : `*Plataforma:* ${platform}`}
+  ${description === ' ' ? '' : `\n ${description}`}
+  `;
+    return formDescription;
+  }
+
 }
 
 /**
@@ -145,16 +160,33 @@ const getFormData = () => {
  * @see {@link https://developers.google.com/apps-script/guides/triggers/installable} for reference about triggers
  * @see {@Link https://developers.google.com/apps-script/reference/script/form-trigger-builder} for reference about FormTriggerBuilder class
  */
-const createTrigger = (form: GoogleAppsScript.Forms.Form, start: Date) => {
-  ScriptApp.newTrigger('formSubmit')
-    .forForm(form)
-    .onFormSubmit()
-    .create();
-    //guardar el id del trigger, para poder borrarlo despues.
-  ScriptApp.newTrigger('closeUncompleteForm')
-    .timeBased()
-    .at(start)
-    .create();
+
+const createTrigger = (form: GoogleAppsScript.Forms.Form, type: string, date?: Date): string => {
+  let trigger: GoogleAppsScript.Script.Trigger;
+  if (type === "submit") {
+    trigger = ScriptApp.newTrigger('formSubmit')
+      .forForm(form)
+      .onFormSubmit()
+      .create();
+    return trigger.getUniqueId();
+  }
+  else if (type === "delete") {
+    trigger = ScriptApp.newTrigger('deleteForm')
+      .timeBased()
+      .at(date!)
+      .create();
+    return trigger.getUniqueId();
+  }
+  else if (type === "uncomplete") {
+    trigger = ScriptApp.newTrigger('uncompleteForm')
+      .timeBased()
+      .at(date!)
+      .create();
+    return trigger.getUniqueId()
+  }
+  else {
+    return 'NONE'
+  }
 }
 
 //--------------------------------------------------------- Main Function ---------------------------------------------------------------
@@ -172,9 +204,9 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form, start: Date) => {
  * @returns the shorten and unshorten url versions of the newly created form 
  */
 const createForm = (data: Workshop, addUrl: string) => {
-  const { id, name, date, startHour } = data;
+  const { id, name, date, startHour, endHour } = data;
   // adds 30 minutes to the start hour of the workshop
-  const start = new Date(date + startHour).getTime() + 1800000;
+  const start = new Date(date + startHour).getTime() - 1800000;
   const formDescription = createFormDescription(data);
   const formCopyId = copyForm(name);
   const form = FormApp.openById(formCopyId);
@@ -183,9 +215,20 @@ const createForm = (data: Workshop, addUrl: string) => {
   form.setConfirmationMessage(confirmationMessage);
   form.setTitle(name);
   //stores the id and the "add to my calendar url"
-  form.setCustomClosedFormMessage(id + '-/' + addUrl);
+  form.setCustomClosedFormMessage(id + '-/' + addUrl + '-/');
   //creates a trigger 'onFormSubmit' for every form.
-  createTrigger(form, new Date(start));
+  const submiTrigger = createTrigger(form, "submit");
+  const closeForm = createTrigger(form, "uncomplete", new Date(start));
+  const end = new Date(new Date(date + endHour).getTime() + 600000).toDateString();
+  const triggersData: IndividualFormData = {
+    submitTrigger: submiTrigger,
+    uncompleteTrigger: closeForm,
+    end
+  }
+  form.setCustomClosedFormMessage(id + '-/' + addUrl + '-/' + submiTrigger);
+
+  storeFormData(triggersData, submiTrigger);
+
   const formUrl = form.getPublishedUrl();
   const formShortenUrl = form.shortenFormUrl(formUrl);
   const ss = createSpreadSheetFormResponse(form);
@@ -222,7 +265,7 @@ const createTemplateForm = (destinationFolder: GoogleAppsScript.Drive.Folder) =>
   const form = FormApp.create('Formulario Template Para Talleres');
   form.addTextItem().setTitle('Appellidos').setRequired(true);
   form.addTextItem().setTitle('Nombres').setRequired(true);
-  form.addTextItem().setTitle('Correo electronico').setRequired(true);
+  form.addTextItem().setTitle('Correo electrónico').setRequired(true);
   // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');
   // form.addTextItem().setTitle('Cedula de Identidad')
   const file = DriveApp.getFileById(form.getId())

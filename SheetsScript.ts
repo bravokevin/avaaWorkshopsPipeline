@@ -116,13 +116,18 @@ class Workshop {
  * @returns  a two dimensional array of all the values grabbed
  * @see https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get
  */
-const getWorkshopsDetails = (): any[][] | undefined => {
-  const [pointOfStart, pointOfEnd] = getCurrentRange();
-  const rangeName = `${SHEET_NAME}!${START_COLUMN}${pointOfStart}:${END_COLUMN}${pointOfEnd}`
+const getWorkshopsDetails = (range?: string): any[][] | undefined => {
+  let rangeName: string = ''
+  if (range === undefined) {
+    const [pointOfStart, pointOfEnd] = getCurrentRange();
+    rangeName = `${SHEET_NAME}!${START_COLUMN}${pointOfStart}:${END_COLUMN}${pointOfEnd}`;
+  }
+  else {
+    rangeName = range;
+  }
   try {
     // Get the values from the spreadsheet using spreadsheetId and the specified range.
-    //@ts-ignore
-    const values = Sheets.Spreadsheets.Values.get(spreadsheet.getId(), rangeName).values;
+    const values = Sheets.Spreadsheets!.Values!.get(spreadsheet.getId(), rangeName).values;
     //  Print the values from spreadsheet if values are available.
     if (!values) {
       throw new Error('No hay datos para procesar!')

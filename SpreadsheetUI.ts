@@ -17,7 +17,7 @@ const onOpen = () => {
     .addItem('Iniciar!', 'init')
     .addItem('Enviar talleres', 'sendWorkshop')
     .addItem('Suspender Taller', 'suspendWorkshop')
-    .addItem('Crear Mensaje', 'createWhatsAppMessage')
+    .addItem('Crear Mensaje', 'createDisplayMessage')
     .addToUi();
 }
 
@@ -37,7 +37,6 @@ const sendWorkshop = () => {
       'Please confirm',
       'Are you sure you want to continue?',
       ui.ButtonSet.YES_NO);
-
     return
   }
   if (ContactsApp.getContactGroup(groupName) === null) {
@@ -57,11 +56,12 @@ const sendWorkshop = () => {
   const prompt = ui.prompt('Coloca el asunto del correo')
   const promptResponse = prompt.getResponseText()
 
+
   try {
     main(values, promptResponse, groupName)
   }
   catch (e) {
-    ui.alert(e)
+    ui.alert(e.message)
     return
   }
   scriptProperties.setProperty(LAST_WORKSHOP_PROPWETY_KEY, values[0][0].toString())
