@@ -122,7 +122,7 @@ const main = (workshopsValuesArr: any[], subject: string, groupName: string) => 
       const [addUrl, meetLink, meetId] = calendarMain(w);
       workshopsToSendASAPFinalDataObj.workshop = w;
       [workshopsToSendASAPFinalDataObj.formUrl, workshopsToSendASAPFinalDataObj.completeFormUrl] = createForm(w, addUrl);
-      setValuesToSpreadsheet(w.id, meetLink, meetId, workshopsToSendASAPFinalDataObj.completeFormUrl);
+      setValuesToSpreadsheet(w.id, workshopsToSendASAPFinalDataObj.completeFormUrl, meetLink, meetId, );
     }
 
     workshopsToSendASAPFinalDataArr.push(workshopsToSendASAPFinalDataObj)
