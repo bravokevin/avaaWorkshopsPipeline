@@ -47,7 +47,7 @@ ${description === ' ' ? '' : `\n ${description}`}`;
 }
 
 /**
- * sets a the name of the sheet as the name of a workshop
+ * Sets a the name of the sheet in where all the response of the form would be stored as the name of a workshop that is link to that form
  * 
  *@description It uses recursion in the case we have an error saying "sheet already exist" to set an incremental value (the `numb` parameter), whitin parentesis,  following the sheet name to avoid that error to stop the program. 
  * 
@@ -64,13 +64,21 @@ ${description === ' ' ? '' : `\n ${description}`}`;
 const setSheetName = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, tittle: string, numb: number = 0) => {
   const sheets = ss.getSheets();
   const actualSheet = sheets[0]
-  let num: number = 0;
+  /**
+   * starts with `1`, and with the following excecutions starts with `0` to have an incremental
+   */
+  let num: number = numb === 0 ? 1 : 0;
+  let sheetTittle = tittle;
   try {
-    actualSheet.setName(tittle)
+    actualSheet.setName(sheetTittle)
   }
   catch (e) {
     num += numb;
-    setSheetName(ss, tittle + `(${num})`, num + 1)
+    /**
+     * substract the `(num)` part of the string to avoid the tittle have multiple parenteses. eg. `tittle(num)(num)(num)`
+     */ 
+    sheetTittle = numb === 0 ? `${tittle}(${num})`:`${tittle.slice(0,tittle.length-3)}(${num})`;
+    setSheetName(ss, sheetTittle, num + 1)
   }
 }
 
