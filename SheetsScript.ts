@@ -120,7 +120,7 @@ const getWorkshopsDetails = (range?: string): any[][] | undefined => {
   let rangeName: string = ''
   if (range === undefined) {
     const [pointOfStart, pointOfEnd] = getCurrentRange();
-    rangeName = `${SHEET_NAME}!${START_COLUMN}${pointOfStart}:${END_COLUMN}${pointOfEnd}`;
+    rangeName = `${SHEET_NAME}!${START_COLUMN}${pointOfStart + 1}:${END_COLUMN}${pointOfEnd}`
   }
   else {
     rangeName = range;
@@ -151,8 +151,7 @@ const getWorkshopsDetails = (range?: string): any[][] | undefined => {
  * 
  * @returns an array of number with the start and end point
  */
-const getCurrentRange = (): [number, number] => {
-
+const getCurrentRange = (update: boolean = false): [number, number] => {
   //gets all the named range and search for 'current_workshops'
   const namedRanges = spreadsheet.getNamedRanges()
   const namedRange = namedRanges.filter((word: GoogleAppsScript.Spreadsheet.NamedRange) => word.getName() === 'current_workshops')
@@ -163,6 +162,7 @@ const getCurrentRange = (): [number, number] => {
   //gets the last row with data in it 
   const pointOfEnd = sheet.getLastRow()
   return [pointOfStart, pointOfEnd]
+
 }
 
 
@@ -175,12 +175,12 @@ const getCurrentRange = (): [number, number] => {
  * This function must be called after sending the email with the workshops details, so we can make sure that all the process was done correctly 
  */
 const updateSheetRange = (): void => {
-  const [pointOfStart, pointOfEnd] = getCurrentRange();
-  const range = `${SHEET_NAME}!${START_COLUMN}${pointOfStart}:${END_COLUMN}${pointOfEnd}`
+  const start = 10 
+  const [, pointOfEnd] = getCurrentRange();
+  const range = `${SHEET_NAME}!${START_COLUMN}${start}:${END_COLUMN}${pointOfEnd}`
   const namedRanges = spreadsheet.getNamedRanges()
   const namedRange = namedRanges.filter((word: GoogleAppsScript.Spreadsheet.NamedRange) => word.getName() === 'current_workshops')
   namedRange[0].setRange(sheet.getRange(range));
-
 }
 
 

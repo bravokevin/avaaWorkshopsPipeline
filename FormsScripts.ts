@@ -70,9 +70,7 @@ const setSheetName = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, tittle: stri
   }
   catch (e) {
     num += numb;
-    if (e === `Exception: A sheet with the name "${tittle}" already exists. Please enter another name.`) {
-      setSheetName(ss, tittle + `(${num})`, num + 1)
-    }
+    setSheetName(ss, tittle + `(${num})`, num + 1)
   }
 }
 

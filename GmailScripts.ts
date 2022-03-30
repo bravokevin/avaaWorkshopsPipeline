@@ -123,7 +123,7 @@ const createMessageObj = (workshopData: WorkshopFinalData[], subject: string, co
       to: 'kevinjosemotab@gmail.com',
       bcc: contactBatch.toString(),
       fromName: "Kevin Bravo",
-      fromEmail: "kevinjosemotab@gmail.com",
+      fromEmail: "bravokevinto@gmail.com",
       subject,
       htmlBody: html,
     }

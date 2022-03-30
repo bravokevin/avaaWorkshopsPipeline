@@ -53,15 +53,17 @@ const sendWorkshop = () => {
   }
   const prompt = ui.prompt('Coloca el asunto del correo')
   const promptResponse = prompt.getResponseText()
+  if (prompt.getResponseText() === '') return;
+
   // try {
-    main(values, promptResponse, groupName)
+  main(values, promptResponse, groupName)
   // }
   // catch (e) {
   //   ui.alert(e.message)
   //   Logger.log(e)
   //   return
   // }
-  scriptProperties.setProperty(LAST_WORKSHOP_PROPWETY_KEY, values[0][0].toString())
+  scriptProperties.setProperty(LAST_WORKSHOP_PROPWETY_KEY, values[values.length - 1][0].toString())
   //Once finished inform throught the UI that the process was completed succesfully
-    ui.alert(`Los talleres: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n han sido enviados exitosamente!!`);
+  ui.alert(`Los talleres: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n han sido enviados exitosamente!!`);
 }
