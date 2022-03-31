@@ -65,5 +65,10 @@ const sendWorkshop = () => {
   // }
   scriptProperties.setProperty(LAST_WORKSHOP_PROPWETY_KEY, values[values.length - 1][0].toString())
   //Once finished inform throught the UI that the process was completed succesfully
-  ui.alert(`Los talleres: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n han sido enviados exitosamente!!`);
+  if(values.length > 2) {
+    ui.alert(`Los talleres: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n han sido enviados exitosamente!!`);
+  }
+  else{ 
+  ui.alert(`El taller: \n ${talleresEnviados.toString().replaceAll(',', '\n')} \n ha sido enviado exitosamente!!`);
+  }
 }

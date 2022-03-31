@@ -21,7 +21,6 @@ const getContacts = (groupName: string): string[][] => {
   while (contacts.length > 0) {
     contactsArr.push(contacts.splice(0, 100))
   }
-
   return contactsArr;
 }
 
