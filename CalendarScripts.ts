@@ -227,9 +227,9 @@ const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?
   const calendarStartDate = startDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
   const calendarEndDate = endDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
 
-  const addUrl = `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${encodeDescription}&location=${encodedLocation}`
-
-  // `http://www.google.com/calendar/event?action=TEMPLATE&text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${EncodeDescription}&location=${location}` this is for open the mobile app rather than the browser
+  const addUrl = `http://www.google.com/calendar/event?action=TEMPLATE&text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${encodeDescription}&location=${encodedLocation}`
+  
+  // `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${encodeDescription}&location=${encodedLocation}` this open in browsers with html in the calendar description, but is too slow
 
   return addUrl
 }
