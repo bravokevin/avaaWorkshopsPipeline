@@ -186,14 +186,14 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleA
 const closeForm = (form: GoogleAppsScript.Forms.Form, triggerUid: GoogleAppsScript.Script.Trigger) => {
   form.setAcceptingResponses(false);
   form.setCustomClosedFormMessage('Cupos agotados!');
-  const { uncompleteTrigger, end } = getFormIdividualData(triggerUid)
-  deleteTriger(uncompleteTrigger!);
-  const deleteTrigger = createTrigger(form, "delete", new Date(end!))
-  const obj: IndividualFormData = {
-    deleteTrigger
-  }
-  storeFormData(obj, triggerUid);
-  form.setDescription(`${triggerUid}`)
+  // const { uncompleteTrigger, end } = getFormIdividualData(triggerUid)
+  // deleteTriger(uncompleteTrigger!);
+  // const deleteTrigger = createTrigger(form, "delete", new Date(end!))
+  // const obj: IndividualFormData = {
+  //   deleteTrigger
+  // }
+  // storeFormData(obj, triggerUid);
+  // form.setDescription(`${triggerUid}`)
 }
 
 const deleteForm = () => {

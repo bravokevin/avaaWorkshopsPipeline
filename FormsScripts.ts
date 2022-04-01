@@ -220,11 +220,11 @@ const createForm = (data: Workshop, addUrl: string) => {
   form.setCustomClosedFormMessage(id + '-/' + addUrl);
   //creates a trigger 'onFormSubmit' for every form.
   const submitTrigger = createTrigger(form, "submit");
-  const closeForm = createTrigger(form, "uncomplete", new Date(start));
+  // const closeForm = createTrigger(form, "uncomplete", new Date(start));
   const end = new Date(new Date(date + endHour).getTime() + 600000).toDateString();
   const triggersData: IndividualFormData = {
     submitTrigger,
-    uncompleteTrigger: closeForm,
+    // uncompleteTrigger: closeForm,
     end
   }
   form.setCustomClosedFormMessage(id + '-/' + addUrl + '-/' + submitTrigger);
