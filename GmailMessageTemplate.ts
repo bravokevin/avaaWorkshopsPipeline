@@ -994,18 +994,19 @@ const createGmailHTMLMessage = (values: WorkshopFinalData[]) => {
     let finalhtml:string[] | string = []
     let dataArr: string[] = []
 
-    if (values.length === 1) {
-        const { workshop, completeFormUrl } = values[0];
-        finalhtml = soloWorkshopDetailsCol(workshop, completeFormUrl)
-    }
-    else {
+    // if (values.length === 1) {
+    //     const { workshop, completeFormUrl } = values[0];
+    //     finalhtml = soloWorkshopDetailsCol(workshop, completeFormUrl)
+    // }
+    // else {
         values.forEach(v => {
             const { workshop, completeFormUrl } = v;
-            dataArr.push(workshopDetailsCol(workshop, completeFormUrl))
-        })
-        while(dataArr.length > 0){
-            finalhtml.push(dataArr.splice(0, 2))
-        }
-    }
+            finalhtml += soloWorkshopDetailsCol(workshop, completeFormUrl)
+    //     })
+    //     while(dataArr.length > 0){
+        
+    //         finalhtml.push(dataArr.splice(0, 2))
+    //     }
+    // }
     return completeHTML(finalhtml.toString().replaceAll(',', ''))
 }
