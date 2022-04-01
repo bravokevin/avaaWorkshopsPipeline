@@ -267,7 +267,10 @@ const createTemplateForm = (destinationFolder: GoogleAppsScript.Drive.Folder) =>
   const form = FormApp.create('Formulario Template Para Talleres');
   form.addTextItem().setTitle('Appellidos').setRequired(true);
   form.addTextItem().setTitle('Nombres').setRequired(true);
-  form.addTextItem().setTitle('Correo electrónico').setRequired(true);
+  const textValidation = FormApp.createTextValidation().requireTextIsEmail()
+  .setHelpText('Introduce un correo electronico valido')
+  .build()
+  form.addTextItem().setTitle('Correo electrónico').setRequired(true).setValidation(textValidation)
   const formId = form.getId()
   // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');
   // form.addTextItem().setTitle('Cedula de Identidad')
