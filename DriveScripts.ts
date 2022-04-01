@@ -110,7 +110,10 @@ const init = () => {
   scriptProperties.setProperty(TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY, templateFormId)
   scriptProperties.setProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY, spreadsheetSubfolder.getId())
   scriptProperties.setProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY, formFubfolder.getId())
-  scriptProperties.setProperty(MAIN_FOLDER_PROPERTY_KEY,spreadsheetSubfolder.getId())
+  scriptProperties.setProperty(MAIN_FOLDER_PROPERTY_KEY, spreadsheetSubfolder.getId())
+  const cell = sheet.getRange(RANGE_FOR_GROUP_NAME);
+  const rule = SpreadsheetApp.newDataValidation().requireValueInList(getGroupOfContacts()).build()
+  cell.setDataValidation(rule);
 }
 
 // const restoreFolder = () => {

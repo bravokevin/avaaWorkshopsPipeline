@@ -24,3 +24,19 @@ const getContacts = (groupName: string): string[][] => {
   return contactsArr;
 }
 
+
+/**
+ * search for all the contacts group in the account and returns its names
+ * 
+ * @returns names of the contactGroup
+ */
+const getGroupOfContacts = () =>{
+  const contactGroup = ContactsApp.getContactGroups();
+  const contactsGroupsNames: string[] = [];
+
+  contactGroup.forEach(c =>{
+    contactsGroupsNames.push(c.getName());
+  })
+
+  return contactsGroupsNames;
+}
