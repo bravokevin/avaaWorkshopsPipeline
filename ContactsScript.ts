@@ -1,7 +1,7 @@
 /**
  * It search for an specific group of contacs and returns the primary email address of all the contacts whithin that group
  * 
- * Due to the appscript limitations (We can only have 100 recipients per email, in the free tier) so every 100 contacts we push `contacts` to `contactsArr`,  Then, we delete the values of `contacts` to start the process again. This allow us to have a two dimensional array with arrays of 100 contacts each.
+ * Due to the appscript limitations (We can only have 100 recipients per email, in the free tier)  every 100 contacts we push `contacts` to `contactsArr`,  Then, we delete the values of `contacts` to start the process again. This allow us to have a two dimensional array with arrays of 100 contacts each.
  * @param groupName - the name of a contact group
  * @returns  an array of email addresses of all the contacts in the specified group
  */
@@ -18,6 +18,7 @@ const getContacts = (groupName: string): string[][] => {
     contacts.push(c.getEmails()[0].getAddress())
   })
 
+  //split the arr into arr of 100 contacts each 
   while (contacts.length > 0) {
     contactsArr.push(contacts.splice(0, 100))
   }
@@ -26,16 +27,16 @@ const getContacts = (groupName: string): string[][] => {
 
 
 /**
- * search for all the contacts group in the account and returns its names
+ * search for all the contacts groups (labels) in the account and returns its names
  * 
  * @returns names of the contactGroup
  */
-const getGroupOfContacts = () =>{
+const getGroupOfContacts = () => {
   const contactGroup = ContactsApp.getContactGroups();
   const contactsGroupsNames: string[] = [];
 
-  contactGroup.forEach(c =>{
-    contactsGroupsNames.push(c.getName());
+  contactGroup.forEach(c => {
+    if (!c.isSystemGroup() && c.getName() !== "Starred in Android") contactsGroupsNames.push(c.getName());
   })
 
   return contactsGroupsNames;

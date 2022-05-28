@@ -3,7 +3,7 @@
 /**
  * Creates the event object with all the details about the workshop
  * 
- * it evaluates whether the workshop is "Presencial" or "Virtual" to set up the platform or not 
+ * it evaluates whether the workshop is "Presencial" or "Virtual" to set up the virtual meeting or not 
  *
  * If the platform of the workshop is 'Google Meet', it creates a meet meeting and add it to the event
  *
@@ -17,7 +17,12 @@
  * 
  * @see {@link https://developers.google.com/calendar/api/v3/reference/events} for the event schema
  */
-const createEventObject = (name: string, kindOfWorkshop: KindOfWorkshop, platform: Platform, calendarDescription: string, start: string, end: string): GoogleAppsScript.Calendar.Schema.Event => {
+const createEventObject = (name: string,
+  kindOfWorkshop: KindOfWorkshop,
+  platform: Platform,
+  calendarDescription: string,
+  start: string,
+  end: string): GoogleAppsScript.Calendar.Schema.Event => {
 
   let event;
 
@@ -228,7 +233,7 @@ const getPublicEventLink = (workshop: Workshop, meetingLink?: string, meetingId?
   const calendarEndDate = endDate.replaceAll('-', '').replaceAll(':', '').replaceAll('.', '')
 
   const addUrl = `http://www.google.com/calendar/event?action=TEMPLATE&text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${encodeDescription}&location=${encodedLocation}`
-  
+
   // `https://calendar.google.com/calendar/r/eventedit?text=${calendarName}&dates=${calendarStartDate}/${calendarEndDate}&details=${encodeDescription}&location=${encodedLocation}` this open in browsers with html in the calendar description, but is too slow
 
   return addUrl
