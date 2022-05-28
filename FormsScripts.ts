@@ -63,7 +63,7 @@ ${description === ' ' ? '' : `\n ${description}`}`;
  */
 const setSheetName = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, tittle: string, numb: number = 0) => {
   const sheets = ss.getSheets();
-  const sheetForRename = sheets.length === 1 ? 0 : sheets.length-1;
+  const sheetForRename = sheets.length === 1 ? 0 : sheets.length - 1;
   const actualSheet = sheets[sheetForRename]
   /**
    * starts with `1`, and with the following excecutions starts with `0` to have an incremental
@@ -213,7 +213,7 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form, type: string, date?: D
  * @returns the shorten and unshorten url versions of the newly created form 
  */
 const createForm = (data: Workshop, addUrl: string) => {
-  const { id, name, date, startHour, endHour } = data;
+  const { id, name, date, startHour, endHour, speaker, pensum, sendType} = data;
   // adds 30 minutes to the start hour of the workshop
   const start = new Date(date + startHour).getTime() - 1800000;
   const formDescription = createFormDescription(data);
@@ -242,13 +242,39 @@ const createForm = (data: Workshop, addUrl: string) => {
   const formShortenUrl = form.shortenFormUrl(formUrl);
 
   const ss = createSpreadSheetFormResponse(form);
+
   /**
    * @see {@link https://stackoverflow.com/questions/63213064/form-responses-spreadsheet-getsheets-doesnt-return-responses-sheet} for reference about using `flush`
    */
   SpreadsheetApp.flush();
   setSheetName(ss, name);
+  setSheetValues(ss, name, speaker, startHour, date, pensum, sendType)
 
   return [formShortenUrl, formUrl, submitTrigger];
+}
+
+
+const setSheetValues = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, nameOfTheWorkshop: string, speaker: string, hour: string, date: string, pensum: Pensum, year: string) => {
+  const NAME_CELL = "C2:E2";
+  const SPEAKER_CELL = "C3:E3"
+  const HOUR_CELL = "C4:E4"
+  const DATE_CELL = "H2:I2"
+  const PENSUM_CELL = "H3:I3"
+  const YEAR_CELL = "H4:I4"
+
+  const sheets = ss.getSheets();
+  const sheetForRename = sheets.length === 1 ? 0 : sheets.length - 1;
+  const actualSheet = sheets[sheetForRename]
+  actualSheet.getRange(SPEAKER_CELL).setValue(speaker)
+  actualSheet.getRange(NAME_CELL).setValue(nameOfTheWorkshop)
+
+  actualSheet.getRange(HOUR_CELL).setValue(hour)
+  actualSheet.getRange(DATE_CELL).setValue(date)
+  actualSheet.getRange(PENSUM_CELL).setValue(pensum)
+  actualSheet.getRange(YEAR_CELL).setValue(year)
+
+
+
 }
 
 /**
