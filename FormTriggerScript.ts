@@ -49,7 +49,7 @@ class Registrantresponse {
     _sex: string,
     _date: string,
     _phoneNumber: string,
-    _email: string;) {
+    _email: string) {
 
     this.surnames = _surnames
     this.names = _names
