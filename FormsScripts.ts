@@ -47,7 +47,7 @@ ${description === ' ' ? '' : `\n ${description}`}`;
 }
 
 /**
- * Sets a the name of the sheet in where all the response of the form would be stored as the name of a workshop that is link to that form
+ * Sets the name of the sheet in where all the response for an specific workshop would be saved 
  * 
  *@description It uses recursion in the case we have an error saying "sheet already exist" to set an incremental value (the `numb` parameter), whitin parentesis,  following the sheet name to avoid that error to stop the program. 
  * 
@@ -63,7 +63,8 @@ ${description === ' ' ? '' : `\n ${description}`}`;
  */
 const setSheetName = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, tittle: string, numb: number = 0) => {
   const sheets = ss.getSheets();
-  const actualSheet = sheets[0]
+  const sheetForRename = sheets.length === 1 ? 0 : sheets.length-1;
+  const actualSheet = sheets[sheetForRename]
   /**
    * starts with `1`, and with the following excecutions starts with `0` to have an incremental
    */
@@ -76,8 +77,8 @@ const setSheetName = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, tittle: stri
     num += numb;
     /**
      * substract the `(num)` part of the string to avoid the tittle have multiple parenteses. eg. `tittle(num)(num)(num)`
-     */ 
-    sheetTittle = numb === 0 ? `${tittle}(${num})`:`${tittle.slice(0,tittle.length-3)}(${num})`;
+     */
+    sheetTittle = numb === 0 ? `${tittle}(${num})` : `${tittle.slice(0, tittle.length - 3)}(${num})`;
     setSheetName(ss, sheetTittle, num + 1)
   }
 }
@@ -103,13 +104,19 @@ const createSpreadSheetFormResponse = (form: GoogleAppsScript.Forms.Form) => {
 
   if (currentMonth === storedMonth) {
     let ss = SpreadsheetApp.openById(actualSpreadSheet);
-    form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId())
+    const source = SpreadsheetApp.openById("1fS-OifF3mYlKm98sDjieZvMWbtwt4Rx53BBX8aCL3mw");
+    const sheetToCpy = source.getSheets()[0];
+    sheetToCpy.copyTo(ss)
+    // form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId())
     return ss
   }
   else {
     const ss = createSpreadSheet(MONTHS[currentMonth])
+    const source = SpreadsheetApp.openById("1fS-OifF3mYlKm98sDjieZvMWbtwt4Rx53BBX8aCL3mw");
+    const sheetToCpy = source.getSheets()[0];
+    sheetToCpy.copyTo(ss)
     updateFormData(ss);
-    form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId())
+    // form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId())
     return ss
   }
 }
@@ -233,6 +240,7 @@ const createForm = (data: Workshop, addUrl: string) => {
 
   const formUrl = form.getPublishedUrl();
   const formShortenUrl = form.shortenFormUrl(formUrl);
+
   const ss = createSpreadSheetFormResponse(form);
   /**
    * @see {@link https://stackoverflow.com/questions/63213064/form-responses-spreadsheet-getsheets-doesnt-return-responses-sheet} for reference about using `flush`
@@ -268,8 +276,8 @@ const createTemplateForm = (destinationFolder: GoogleAppsScript.Drive.Folder) =>
   form.addTextItem().setTitle('Appellidos').setRequired(true);
   form.addTextItem().setTitle('Nombres').setRequired(true);
   const textValidation = FormApp.createTextValidation().requireTextIsEmail()
-  .setHelpText('Introduce un correo electronico valido')
-  .build()
+    .setHelpText('Introduce un correo electronico valido')
+    .build()
   form.addTextItem().setTitle('Correo electrónico').setRequired(true).setValidation(textValidation)
   const formId = form.getId()
   // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');

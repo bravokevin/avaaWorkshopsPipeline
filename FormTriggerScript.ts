@@ -34,6 +34,33 @@ type IndividualFormData = {
 
 type RegistrantData = { name: string, email: string }
 
+class Registrantresponse {
+  surnames: string;
+  names: string;
+  dni: string;
+  sex: string;
+  date: string;
+  phoneNumber: string;
+  email: string;
+
+  constructor(_surnames: string,
+    _names: string,
+    _dni: string,
+    _sex: string,
+    _date: string,
+    _phoneNumber: string,
+    _email: string;) {
+
+    this.surnames = _surnames
+    this.names = _names
+    this.dni = _dni
+    this.sex = _sex
+    this.date = _date
+    this.phoneNumber = _phoneNumber
+    this.email = _email
+  }
+}
+
 /**
  * Gets all the necesary data to configure the form 
  * 
@@ -149,17 +176,19 @@ Si gustas, puedes agregar este evento a tu calendario con este link ${addToCalen
  */
 const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleAppsScript.Forms.FormResponse, individual: boolean) => {
   let resp: string[] = [];
+  let respo: Registrantresponse[] = [];
   if (individual === true) {
     //@ts-ignore
     responses.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
       const itemName = r.getItem().getTitle();
       const itemResponse = r.getResponse();
-      if (itemName === 'Correo electrónico') {
+      if (itemName === 'Correo electrónico' || "Apellidos" || "Nombres" || "Sexo" || "Cedula de Identidad" || "Mes y año ingreso a AVAA") {
         //@ts-ignore
         resp.push(itemResponse);
       }
     })
-    return resp;
+    respo.push(new Registrantresponse(...resp))
+    return respo;
   }
   else {
     //@ts-ignore
@@ -167,12 +196,14 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleA
       response.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
         const itemName = r.getItem().getTitle();
         const itemResponse = r.getResponse();
-        if (itemName === 'Correo electrónico') {
+        if (itemName === 'Correo electrónico' || "Apellidos" || "Nombres" || "Sexo" || "Cedula de Identidad" || "Mes y año ingreso a AVAA") {
           resp.push(itemResponse);
         }
       })
+      respo.push(new Registrantresponse(...resp))
+
     })
-    return resp;
+    return respo;
   }
 
 }
@@ -244,6 +275,7 @@ const formSubmit = (e: EventFormResponse) => {
   const numberOfResponses = form.getResponses().length;
   const triggerUid = e.triggerUid;
   const triggerUidString = triggerUid.toString();
+  const { storedMonth, actualSpreadSheet } = getFormData()
 
   /**
  * This prevents collisions when multiple users are sending a form submision
@@ -252,7 +284,7 @@ const formSubmit = (e: EventFormResponse) => {
   const lock = LockService.getScriptLock();
   // Wait for up to 30 seconds for other processes to finish.
   lock.waitLock(30000);
-
+  const spreadSheetResponse = SpreadsheetApp.openById(actualSpreadSheet);
 
   // with the first submision, gets all the values to make the form work.
   if (numberOfResponses < 2) {
@@ -262,9 +294,12 @@ const formSubmit = (e: EventFormResponse) => {
   }
 
   const { workshopName, range, meetUrl, addToCalendarUrl, limit, unfull } = getFormIdividualData(triggerUidString);
+  const actualSheet = spreadSheetResponse.getSheetByName(workshopName!)!
   //updates the value of the current number of registrants in the main spreadsheet.
   const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range!;
   sheet.getRange(cellForUpdate).setValue(numberOfResponses);
+  const resp = getResponses(form.getResponses(), false);
+  actualSheet.appendRow([null, ...resp,])
 
   SpreadsheetApp.flush()
   // release the lock
@@ -275,8 +310,12 @@ const formSubmit = (e: EventFormResponse) => {
   if (numberOfResponses >= limit!) {
     if (unfull === false) {
       form.getResponses()
+      const emails: string[] = []
       const resp = getResponses(form.getResponses(), false);
-      sendEmailToRegistrants(resp, workshopName!, meetUrl!, addToCalendarUrl!)
+      resp.forEach(r =>{
+        emails.push(r.email)
+      })
+      sendEmailToRegistrants(emails, workshopName!, meetUrl!, addToCalendarUrl!)
     }
     closeForm(form, triggerUid)
   }

@@ -18,7 +18,7 @@ const deleteFile = (FileId: string) => {
 /**
  * Creates a copy of the form template {@linkcode TEMPLATE_WORKSHOP_FORM_PROPERTY_KEY}
  * 
- * It makes a copy of the form we set of as template for registring to the workshops an then move that document created to a specific directory.
+ * It makes a copy of the form we set of as template for registring to the workshops an then move that document to a specific directory.
  * 
  * @returns the id of the form reciently created
 
@@ -77,7 +77,8 @@ const copyForm = (workshopName: string): string => {
  */
 
 const createSpreadSheet = (month: string) => {
-  const ss = SpreadsheetApp.create(`Talleres de ${month} del ${new Date().getFullYear()}`)
+  const validationSs = SpreadsheetApp.openById("1fS-OifF3mYlKm98sDjieZvMWbtwt4Rx53BBX8aCL3mw");
+  const ss = validationSs.copy(`Talleres de ${month} del ${new Date().getFullYear()}`)
   const ssFile = DriveApp.getFileById(ss.getId())
   let spreadsheetFolderId = scriptProperties.getProperty(SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY)
   let spreadSheetWorkshopsFolder: GoogleAppsScript.Drive.Folder;
@@ -96,7 +97,7 @@ const createSpreadSheet = (month: string) => {
 }
 
 /**
- * It creates all the initial folders and files, necesaries to start working 
+ * It creates all the initial folders and files necesaries to start working 
  * 
  * @see {@link https://developers.google.com/apps-script/reference/properties/properties#getproperties} for reference about storing data in bulk
  */

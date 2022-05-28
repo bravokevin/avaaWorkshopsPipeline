@@ -16,8 +16,8 @@
  */
 const workshopDetailsCol = (workshop: Workshop, formUrl: string) => {
 
-    const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description } = workshop;
-    return `
+  const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description } = workshop;
+  return `
   <div id="u_column_16" class="u-col u-col-50" style="max-width: 320px;min-width: 325px;display: table-cell;vertical-align: top;">
   <div style="width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
   <!--[if (!mso)&(!IE)]><!--><div class="v-col-border" style="padding: 0px;border-top: 2px solid #009640;border-left: 2px solid transparent;border-right: 2px solid #009640;border-bottom: 0px solid transparent;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;"><!--<![endif]-->
@@ -175,8 +175,8 @@ ${description === "" ? "" : `<table style="font-family:'Open Sans',sans-serif;" 
 <!--[if (mso)|(IE)]></td><![endif]-->`
 }
 
-const makeRow = (data:string)=>{
-    return `<div class="u-row-container" style="padding: 0px;background-color: #ffffff">
+const makeRow = (data: string) => {
+  return `<div class="u-row-container" style="padding: 0px;background-color: #ffffff">
     <div class="u-row" style="Margin: 0 auto;min-width: 320px;max-width: 650px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
       <div style="border-collapse: collapse;display: table;width: 100%;background-color: transparent;">
         <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-color: #ffffff;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:650px;"><tr style="background-color: transparent;"><![endif]-->
@@ -193,9 +193,9 @@ const makeRow = (data:string)=>{
 
 const soloWorkshopDetailsCol = (workshop: Workshop, formUrl: string) => {
 
-    const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description } = workshop;
+  const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description } = workshop;
 
-    return `<div class="u-row-container" style="padding: 0px;background-color: transparent">
+  return `<div class="u-row-container" style="padding: 0px;background-color: transparent">
 <div class="u-row" style="Margin: 0 auto;min-width: 320px;max-width: 650px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
   <div style="border-collapse: collapse;display: table;width: 100%;background-color: transparent;">
     <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding: 0px;background-color: transparent;" align="center"><table cellpadding="0" cellspacing="0" border="0" style="width:650px;"><tr style="background-color: transparent;"><![endif]-->
@@ -365,7 +365,7 @@ ${description === '' ? '' : `<table style="font-family:'Open Sans',sans-serif;" 
  * @returns the complete HTML messsage 
  */
 const completeHTML = (rowData: string) => {
-    return `
+  return `
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
@@ -991,22 +991,23 @@ ${rowData}
  * @returns the complete HTML messsage to be send with all the workshops data. 
  */
 const createGmailHTMLMessage = (values: WorkshopFinalData[]) => {
-    let finalhtml:string[] | string = []
-    let dataArr: string[] = []
+  let finalhtml: string[] | string = []
+  let dataArr: string[] = []
 
-    // if (values.length === 1) {
-    //     const { workshop, completeFormUrl } = values[0];
-    //     finalhtml = soloWorkshopDetailsCol(workshop, completeFormUrl)
-    // }
-    // else {
-        values.forEach(v => {
-            const { workshop, completeFormUrl } = v;
-            finalhtml += soloWorkshopDetailsCol(workshop, completeFormUrl)
-    //     })
-    //     while(dataArr.length > 0){
-        
-    //         finalhtml.push(dataArr.splice(0, 2))
-    //     }
-    // }
-    return completeHTML(finalhtml.toString().replaceAll(',', ''))
+  // if (values.length === 1) {
+  //     const { workshop, completeFormUrl } = values[0];
+  //     finalhtml = soloWorkshopDetailsCol(workshop, completeFormUrl)
+  // }
+  // else {
+  values.forEach(v => {
+    const { workshop, completeFormUrl } = v;
+    finalhtml += soloWorkshopDetailsCol(workshop, completeFormUrl)
+  })
+  //     })
+  //     while(dataArr.length > 0){
+
+  //         finalhtml.push(dataArr.splice(0, 2))
+  //     }
+  // }
+  return completeHTML(finalhtml.toString().replaceAll(',', ''))
 }
