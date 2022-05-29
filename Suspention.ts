@@ -14,7 +14,7 @@ Un abrazo!!
 `
     const encodedMessage = encodeURIComponent(message)
 
-    const createMessageLink = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=ghostering@mail.com&su=${encodedSubject}&body=encodedMessage&bcc=${recipients}`
+    const createMessageLink = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&to=ghostering@mail.com&su=${encodedSubject}&body=${encodedMessage}&bcc=${recipients}`
 
     return createMessageLink;
 }
@@ -35,6 +35,8 @@ const suspendWorkshop = () => {
     }
     const workshopName = form.getTitle();
     const resp = getResponses(form.getResponses(), false);
-    const messageLink = createGmailMessageLink(resp, workshopName);;
+    form.setAcceptingResponses(false)
+    form.setCustomClosedFormMessage("Lo lamentamos este taller ha sido suspendido. Ofrecemos disculpas por las molestias ocacionadas.")
+    const messageLink = createGmailMessageLink(resp, workshopName);
 }
 

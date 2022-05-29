@@ -16,7 +16,7 @@
  */
 const workshopDetailsCol = (workshop: Workshop, formUrl: string) => {
 
-  const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description } = workshop;
+  const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description, avaaYear } = workshop;
   return `
   <div id="u_column_16" class="u-col u-col-50" style="max-width: 320px;min-width: 325px;display: table-cell;vertical-align: top;">
   <div style="width: 100% !important;border-radius: 0px;-webkit-border-radius: 0px; -moz-border-radius: 0px;">
@@ -135,6 +135,20 @@ ${kindOfWorkshop === "Presencial" ? '' : `<table style="font-family:'Open Sans',
   </tbody>
 </table>
 
+<table style="font-family:'Open Sans',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+<tbody>
+  <tr>
+    <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 15px 0px 20px;font-family:'Open Sans',sans-serif;" align="left">
+      
+<div class="v-text-align" style="color: #080808; line-height: 160%; text-align: center; word-wrap: break-word;">
+  <p style="font-size: 14px; line-height: 160%;"><strong><span style="font-size: 16px; line-height: 25.6px;">Año: </span></strong><span style="font-size: 16px; line-height: 25.6px;">${avaaYear}</span></p>
+</div>
+
+    </td>
+  </tr>
+</tbody>
+</table>
+
 ${description === "" ? "" : `<table style="font-family:'Open Sans',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
 <tbody>
   <tr>
@@ -193,7 +207,7 @@ const makeRow = (data: string) => {
 
 const soloWorkshopDetailsCol = (workshop: Workshop, formUrl: string) => {
 
-  const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description } = workshop;
+  const { name, pensum, date, startHour, endHour, speaker, numberOfParticipants, kindOfWorkshop, platform, description, avaaYear } = workshop;
 
   return `<div class="u-row-container" style="padding: 0px;background-color: transparent">
 <div class="u-row" style="Margin: 0 auto;min-width: 320px;max-width: 650px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
@@ -317,13 +331,27 @@ ${kindOfWorkshop === "Presencial" ? '' : `
 </tbody>
 </table>
 
-${description === '' ? '' : `<table style="font-family:'Open Sans',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+<table style="font-family:'Open Sans',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
 <tbody>
   <tr>
     <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 15px 0px 20px;font-family:'Open Sans',sans-serif;" align="left">
       
 <div class="v-text-align" style="color: #080808; line-height: 160%; text-align: center; word-wrap: break-word;">
-  <p style="font-size: 14px; line-height: 160%;"><strong><span style="font-size: 16px; line-height: 25.6px;">Cupos: </span></strong><span style="font-size: 16px; line-height: 25.6px;">${numberOfParticipants}</span></p>
+  <p style="font-size: 14px; line-height: 160%;"><strong><span style="font-size: 16px; line-height: 25.6px;">Año: </span></strong><span style="font-size: 16px; line-height: 25.6px;">${avaaYear}</span></p>
+</div>
+
+    </td>
+  </tr>
+</tbody>
+</table>
+
+${description === "" ? "" : `<table style="font-family:'Open Sans',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+<tbody>
+  <tr>
+    <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px 15px 0px 20px;font-family:'Open Sans',sans-serif;" align="left">
+      
+<div class="v-text-align" style="color: #080808; line-height: 160%; text-align: left; word-wrap: break-word;">
+  <p style="font-size: 14px; line-height: 160%;"><span style="font-size: 16px; line-height: 25.6px;">${description}</span></p>
 </div>
 
     </td>

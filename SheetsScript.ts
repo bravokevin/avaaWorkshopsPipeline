@@ -59,7 +59,7 @@ const isBlank = (currentValue: any): boolean => currentValue[0] === '';
 type Pensum = 'Liderazgo' | 'Ejercicio Ciudadano' | 'Gerencia de si mismo' | 'TICs' | 'Emprendimiento';
 type KindOfWorkshop = 'Presencial' | 'Virtual';
 type Platform = 'Zoom' | 'Google Meet' | 'Otra';
-
+type AVAAYear = 'I' | "II" | "III" | "IV" | "V"
 
 // --------------------------------------------- class/schema for storing workshops details ---------------------------------------------
 
@@ -75,7 +75,7 @@ class Workshop {
   kindOfWorkshop: KindOfWorkshop;
   platform: Platform;
   description: string;
-  sendType: string;
+  avaaYear: string;
 
   constructor(
     id: number,
@@ -89,7 +89,7 @@ class Workshop {
     kindOfWorkshop: KindOfWorkshop,
     platform: Platform,
     description: string,
-    sendType: string
+    avaaYear: string
   ) {
 
     this.id = id;
@@ -103,7 +103,7 @@ class Workshop {
     this.kindOfWorkshop = kindOfWorkshop;
     this.platform = platform;
     this.description = description;
-    this.sendType = sendType;
+    this.avaaYear = avaaYear;
   }
 }
 // --------------------------------------------- functions ---------------------------------------------
@@ -179,7 +179,7 @@ const getCurrentRange = (update: boolean = false): [number, number] => {
  * This function must be called after sending the email with the workshops details, so we can make sure that all the process was done correctly 
  */
 const updateSheetRange = (): void => {
-  const start = 10 
+  const start = 10
   const [, pointOfEnd] = getCurrentRange();
   const range = `${SHEET_NAME}!${START_COLUMN}${start}:${END_COLUMN}${pointOfEnd}`
   const namedRanges = spreadsheet.getNamedRanges()
@@ -221,7 +221,7 @@ const processData = (values: any[][]): Workshop[] => {
 
 
 // /**
-//  * Determine if a workshop should be scheduled or not based on its type {Workshop.sendType}
+//  * Determine if a workshop should be scheduled or not based on its type {Workshop.avaaYear}
 //  * @param WorkshopData - an array of the class Workshop
 //  * @returns  a tupple of the workshops that have to be scheduled and workshops that we can send ASAP
 //  */
@@ -230,10 +230,10 @@ const processData = (values: any[][]): Workshop[] => {
 //   const workshopsToSendASAP: Workshop[] = []
 
 //   workshopData.forEach(workshop => {
-//     if (workshop.sendType === "ASAP") {
+//     if (workshop.avaaYear === "ASAP") {
 //       workshopsToSendASAP.push(workshop)
 //     }
-//     else if (workshop.sendType === "Programar") {
+//     else if (workshop.avaaYear === "Programar") {
 //       scheduledWOrkshops.push(workshop);
 //     }
 //   })

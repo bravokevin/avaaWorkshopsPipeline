@@ -4,6 +4,7 @@
 const createDisplayMessage = () => {
     const ui = SpreadsheetApp.getUi();
     const result = ui.prompt("Coloca el identificador del taller:");
+    if(result.getSelectedButton() === ui.Button.CANCEL) return;
     if(result.getResponseText() === '') return;
     const range = result.getResponseText().toString();
     const rangeName = `${SHEET_NAME}!${START_COLUMN}${range}:${END_COLUMN}${range}`

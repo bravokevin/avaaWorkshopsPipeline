@@ -21,3 +21,9 @@ const SPREADSHEET_FORMS_WORKSHOPS_SUBFOLDER_PROPERTY_KEY = '1iz-4v4BSBDR5w4JU_Xb
  * The key under where the main folder is going to be stored in {@linkcode scriptProperties}
  */
 const MAIN_FOLDER_PROPERTY_KEY = "afjnldkjfanldskjfandsljfakjadnflakjs"
+
+
+/**
+ * Spreadsheet id we use as template for store the registrants data and validate the workshop. 
+ */
+const SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID = "1fS-OifF3mYlKm98sDjieZvMWbtwt4Rx53BBX8aCL3mw"

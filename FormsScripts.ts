@@ -104,19 +104,17 @@ const createSpreadSheetFormResponse = (form: GoogleAppsScript.Forms.Form) => {
 
   if (currentMonth === storedMonth) {
     let ss = SpreadsheetApp.openById(actualSpreadSheet);
-    const source = SpreadsheetApp.openById("1fS-OifF3mYlKm98sDjieZvMWbtwt4Rx53BBX8aCL3mw");
+    const source = SpreadsheetApp.openById(SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID );
     const sheetToCpy = source.getSheets()[0];
     sheetToCpy.copyTo(ss)
-    // form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId())
     return ss
   }
   else {
     const ss = createSpreadSheet(MONTHS[currentMonth])
-    const source = SpreadsheetApp.openById("1fS-OifF3mYlKm98sDjieZvMWbtwt4Rx53BBX8aCL3mw");
+    const source = SpreadsheetApp.openById(SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID );
     const sheetToCpy = source.getSheets()[0];
     sheetToCpy.copyTo(ss)
     updateFormData(ss);
-    // form.setDestination(FormApp.DestinationType.SPREADSHEET, ss.getId())
     return ss
   }
 }
@@ -213,7 +211,7 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form, type: string, date?: D
  * @returns the shorten and unshorten url versions of the newly created form 
  */
 const createForm = (data: Workshop, addUrl: string) => {
-  const { id, name, date, startHour, endHour, speaker, pensum, sendType} = data;
+  const { id, name, date, startHour, endHour, speaker, pensum, avaaYear} = data;
   // adds 30 minutes to the start hour of the workshop
   const start = new Date(date + startHour).getTime() - 1800000;
   const formDescription = createFormDescription(data);
@@ -248,7 +246,7 @@ const createForm = (data: Workshop, addUrl: string) => {
    */
   SpreadsheetApp.flush();
   setSheetName(ss, name);
-  setSheetValues(ss, name, speaker, startHour, date, pensum, sendType)
+  setSheetValues(ss, name, speaker, startHour, date, pensum, avaaYear)
 
   return [formShortenUrl, formUrl, submitTrigger];
 }

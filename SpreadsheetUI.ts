@@ -20,7 +20,6 @@ const onOpen = () => {
     .addItem('Suspender Taller', 'suspendWorkshop')
     .addItem('Crear Mensaje', 'createDisplayMessage')
     .addItem('Sincronizar contactos', 'createDisplayMessage')
-
     .addToUi();
 }
 
@@ -29,6 +28,7 @@ const sendWorkshop = () => {
   let values: any[];
   const ui = SpreadsheetApp.getUi()
   const groupName = sheet.getRange(RANGE_FOR_GROUP_NAME).getValue()
+
   try {
     values = getWorkshopsDetails()!;
     values.forEach(value => {
@@ -56,8 +56,8 @@ const sendWorkshop = () => {
   }
   const prompt = ui.prompt('Coloca el asunto del correo')
   const promptResponse = prompt.getResponseText()
-  if (prompt.getResponseText() === '') return;
-
+  if(prompt.getResponseText() === '') return;
+  if(prompt.getSelectedButton() === ui.Button.CANCEL) return;
   // try {
   main(values, promptResponse, groupName)
   // }
