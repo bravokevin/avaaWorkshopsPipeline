@@ -34,7 +34,7 @@ const suspendWorkshop = () => {
         return;
     }
     const workshopName = form.getTitle();
-    const resp = getResponses(form.getResponses());
+    const resp = getResponses(form.getResponses(), false);
     const messageLink = createGmailMessageLink(resp, workshopName);;
 }
 

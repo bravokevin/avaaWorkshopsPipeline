@@ -41,3 +41,14 @@ const getGroupOfContacts = () => {
 
   return contactsGroupsNames;
 }
+
+/**
+ * Put all the contacts labels created in the {@linkcode RANGE_FOR_GROUP_NAME} cel
+ * 
+ * @description uses data validation utility of spreadsheet to create a list with only the required labels.
+ */
+const syncContactsLabels = () =>{
+  const cell = sheet.getRange(RANGE_FOR_GROUP_NAME);
+  const rule = SpreadsheetApp.newDataValidation().requireValueInList(getGroupOfContacts()).build()
+  cell.setDataValidation(rule);
+}

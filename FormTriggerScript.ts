@@ -182,6 +182,7 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleA
     responses.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
       const itemName = r.getItem().getTitle();
       const itemResponse = r.getResponse();
+      
       if (itemName === 'Correo electrónico' || "Apellidos" || "Nombres" || "Sexo" || "Cedula de Identidad" || "Mes y año ingreso a AVAA") {
         //@ts-ignore
         resp.push(itemResponse);
@@ -196,14 +197,12 @@ const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleA
       response.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
         const itemName = r.getItem().getTitle();
         const itemResponse = r.getResponse();
-        if (itemName === 'Correo electrónico' || "Apellidos" || "Nombres" || "Sexo" || "Cedula de Identidad" || "Mes y año ingreso a AVAA") {
+        if (itemName === 'Correo electrónico') {
           resp.push(itemResponse);
         }
       })
-      respo.push(new Registrantresponse(...resp))
-
     })
-    return respo;
+    return resp;
   }
 
 }
@@ -298,7 +297,7 @@ const formSubmit = (e: EventFormResponse) => {
   //updates the value of the current number of registrants in the main spreadsheet.
   const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range!;
   sheet.getRange(cellForUpdate).setValue(numberOfResponses);
-  const resp = getResponses(form.getResponses(), false);
+  const resp = getResponses(form.getResponses(), true);
   actualSheet.appendRow([null, ...resp,])
 
   SpreadsheetApp.flush()

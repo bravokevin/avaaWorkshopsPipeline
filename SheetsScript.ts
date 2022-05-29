@@ -38,7 +38,7 @@ const resetAllValues = () => {
   const formsFolderId = scriptProperties.getProperty(FORM_SUBFOLDER_FOR_WORKSHOPS_PROPERTY_KEY);
   const namedRanges = spreadsheet.getNamedRanges()
   const namedRange = namedRanges.filter((word: GoogleAppsScript.Spreadsheet.NamedRange) => word.getName() === 'current_workshops')
-  namedRange[0].setRange(sheet.getRange("C10:N10"))
+  namedRange[0].setRange(sheet.getRange("C9:N9"))
 
   triggers.forEach(t => {
     ScriptApp.deleteTrigger(t);
