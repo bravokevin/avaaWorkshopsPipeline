@@ -81,6 +81,7 @@ const setSheetName = (ss: GoogleAppsScript.Spreadsheet.Spreadsheet, tittle: stri
     sheetTittle = numb === 0 ? `${tittle}(${num})` : `${tittle.slice(0, tittle.length - 3)}(${num})`;
     setSheetName(ss, sheetTittle, num + 1)
   }
+  return sheetTittle
 }
 
 /**
@@ -104,14 +105,14 @@ const createSpreadSheetFormResponse = (form: GoogleAppsScript.Forms.Form) => {
 
   if (currentMonth === storedMonth) {
     let ss = SpreadsheetApp.openById(actualSpreadSheet);
-    const source = SpreadsheetApp.openById(SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID );
+    const source = SpreadsheetApp.openById(SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID);
     const sheetToCpy = source.getSheets()[0];
     sheetToCpy.copyTo(ss)
     return ss
   }
   else {
     const ss = createSpreadSheet(MONTHS[currentMonth])
-    const source = SpreadsheetApp.openById(SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID );
+    const source = SpreadsheetApp.openById(SPREADSHEET_TEMPLATE_FOR_FORM_VALIDATION_ID);
     const sheetToCpy = source.getSheets()[0];
     sheetToCpy.copyTo(ss)
     updateFormData(ss);
@@ -211,16 +212,19 @@ const createTrigger = (form: GoogleAppsScript.Forms.Form, type: string, date?: D
  * @returns the shorten and unshorten url versions of the newly created form 
  */
 const createForm = (data: Workshop, addUrl: string) => {
-  const { id, name, date, startHour, endHour, speaker, pensum, avaaYear} = data;
+  const { id, name, date, startHour, endHour, speaker, pensum, avaaYear } = data;
   // adds 30 minutes to the start hour of the workshop
   const start = new Date(date + startHour).getTime() - 1800000;
   const formDescription = createFormDescription(data);
   const formCopyId = copyForm(name);
   const form = FormApp.openById(formCopyId);
   const confirmationMessage = createFormConfirmationMessage(addUrl);
+  const ss = createSpreadSheetFormResponse(form);
+  const theFinalName = setSheetName(ss, name);
+  setSheetValues(ss, name, speaker, startHour, date, pensum, avaaYear)
   form.setDescription(formDescription);
   form.setConfirmationMessage(confirmationMessage);
-  form.setTitle(name);
+  form.setTitle(theFinalName);
   //stores the id and the "add to my calendar url"
   form.setCustomClosedFormMessage(id + '-/' + addUrl);
   //creates a trigger 'onFormSubmit' for every form.
@@ -239,14 +243,12 @@ const createForm = (data: Workshop, addUrl: string) => {
   const formUrl = form.getPublishedUrl();
   const formShortenUrl = form.shortenFormUrl(formUrl);
 
-  const ss = createSpreadSheetFormResponse(form);
 
   /**
    * @see {@link https://stackoverflow.com/questions/63213064/form-responses-spreadsheet-getsheets-doesnt-return-responses-sheet} for reference about using `flush`
    */
   SpreadsheetApp.flush();
-  setSheetName(ss, name);
-  setSheetValues(ss, name, speaker, startHour, date, pensum, avaaYear)
+
 
   return [formShortenUrl, formUrl, submitTrigger];
 }
@@ -297,12 +299,12 @@ Si deseas, puedes añadir este evento a tu calendario = ${addToMyCalendarLink}`;
  */
 const createTemplateForm = (destinationFolder: GoogleAppsScript.Drive.Folder) => {
   const form = FormApp.create('Formulario Template Para Talleres');
-  form.addTextItem().setTitle('Appellidos').setRequired(true);
+  form.addTextItem().setTitle('Apellidos').setRequired(true);
   form.addTextItem().setTitle('Nombres').setRequired(true);
   const textValidation = FormApp.createTextValidation().requireTextIsEmail()
-    .setHelpText('Introduce un correo electronico valido')
-    .build()
-  form.addTextItem().setTitle('Correo electrónico').setRequired(true).setValidation(textValidation)
+  form.addTextItem().setTitle('Correo electrónico').setRequired(true)
+  // .setValidation(textValidation)
+  //   .setHelpText('Introduce un correo electronico valido')
   const formId = form.getId()
   // form.addTextItem().setTitle('Mes y año de ingreso').setHelpText('Ejemplo: Agosto 2019');
   // form.addTextItem().setTitle('Cedula de Identidad')

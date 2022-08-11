@@ -29,7 +29,12 @@ const sheet = spreadsheet.getSheetByName(SHEET_NAME)! //the sheet from where we 
 const scriptProperties: GoogleAppsScript.Properties.Properties = PropertiesService.getScriptProperties();
 
 /**
- * Deletes all the script properties values whithin the script;
+ * Resets all the values to default
+ * 
+ * Deletes all script properties
+ * restore range in name range
+ * Deletes all triggers
+ * Deletes all folders
  */
 const resetAllValues = () => {
   scriptProperties.deleteAllProperties();
@@ -75,7 +80,7 @@ class Workshop {
   kindOfWorkshop: KindOfWorkshop;
   platform: Platform;
   description: string;
-  avaaYear: string;
+  avaaYear: AVAAYear;
 
   constructor(
     id: number,
@@ -89,7 +94,7 @@ class Workshop {
     kindOfWorkshop: KindOfWorkshop,
     platform: Platform,
     description: string,
-    avaaYear: string
+    avaaYear: AVAAYear
   ) {
 
     this.id = id;

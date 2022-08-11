@@ -132,8 +132,8 @@ const getFormIdividualData = (key: string): IndividualFormData => {
  */
 const deleteTriger = (triggerUid: GoogleAppsScript.Script.Trigger) => {
   const triggers = ScriptApp.getProjectTriggers();
-  triggers.forEach(t => {
-    if (t === triggerUid.toString()) {
+  triggers.forEach((t: GoogleAppsScript.Script.Trigger) => {
+    if (t.getUniqueId() === triggerUid.toString()) {
       ScriptApp.deleteTrigger(triggerUid)
     }
   })
@@ -176,27 +176,47 @@ Si gustas, puedes agregar este evento a tu calendario con este link ${addToCalen
  */
 const getResponses = (responses: GoogleAppsScript.Forms.FormResponse[] | GoogleAppsScript.Forms.FormResponse, individual: boolean) => {
   let resp: string[] = [];
-  let respo: Registrantresponse[] = [];
+  // let respo: Registrantresponse[] = [];
   if (individual === true) {
     //@ts-ignore
+    let respo = new Registrantresponse()
     responses.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
       const itemName = r.getItem().getTitle();
-      const itemResponse = r.getResponse();
-
-      if (itemName === 'Correo electrónico' || "Apellidos" || "Nombres" || "Sexo" || "Cedula de Identidad" || "Mes y año ingreso a AVAA") {
-        //@ts-ignore
-        resp.push(itemResponse);
+      const itemResponse = r.getResponse() as string;
+      switch (itemName) {
+        case "Apellidos":
+          respo.surnames = itemResponse
+          break;
+        case "Correo electrónico":
+          respo.email = itemResponse
+          break;
+        case "Nombres":
+          respo.names = itemResponse
+          break;
+        case "Sexo":
+          respo.sex = itemResponse
+          break;
+        case "Cedula de Identidad":
+          respo.dni = itemResponse
+          break;
+        case "Mes y año ingreso a AVAA":
+          respo.dni = itemResponse
+          break;
       }
+
+      // if (itemName === 'Correo electrónico' || "Apellidos" || "Nombres" || "Sexo" || "Cedula de Identidad" || "Mes y año ingreso a AVAA") {
+      //   //@ts-ignore
+      //   resp.push(itemResponse);
+      // }
     })
-    respo.push(new Registrantresponse(...resp))
-    return resp;
+    return respo;
   }
   else {
     //@ts-ignore
     responses.forEach(response => {
       response.getItemResponses().forEach((r: GoogleAppsScript.Forms.ItemResponse) => {
         const itemName = r.getItem().getTitle();
-        const itemResponse = r.getResponse();
+        const itemResponse = r.getResponse() as string;
         if (itemName === 'Correo electrónico') {
           resp.push(itemResponse);
         }
@@ -297,8 +317,8 @@ const formSubmit = (e: EventFormResponse) => {
   //updates the value of the current number of registrants in the main spreadsheet.
   const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range!;
   sheet.getRange(cellForUpdate).setValue(numberOfResponses);
-  const resp = getResponses(form.getResponses(), true);
-  actualSheet.appendRow([null, ...resp,])
+  const resp = getResponses(e.response, true) as Registrantresponse;
+  actualSheet.appendRow([numberOfResponses, resp.surnames, resp.names, resp.dni, resp.sex, resp.date, resp.phoneNumber, resp.email])
 
   SpreadsheetApp.flush()
   // release the lock
@@ -310,9 +330,9 @@ const formSubmit = (e: EventFormResponse) => {
     if (unfull === false) {
       form.getResponses()
       const emails: string[] = []
-      const resp = getResponses(form.getResponses(), false);
-      resp.forEach(r =>{
-        emails.push(r.email)
+      const resp = getResponses(form.getResponses(), false) as string[];
+      resp.forEach((r: string) => {
+        emails.push(r)
       })
       sendEmailToRegistrants(emails, workshopName!, meetUrl!, addToCalendarUrl!)
     }

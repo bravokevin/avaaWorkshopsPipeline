@@ -19,7 +19,6 @@ const onOpen = () => {
     .addItem('Sincronizar contactos', 'syncContactsLabels')
     .addItem('Suspender Taller', 'suspendWorkshop')
     .addItem('Crear Mensaje', 'createDisplayMessage')
-    .addItem('Sincronizar contactos', 'createDisplayMessage')
     .addToUi();
 }
 

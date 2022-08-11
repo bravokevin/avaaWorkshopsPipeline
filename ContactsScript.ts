@@ -1,7 +1,5 @@
 /**
  * It search for an specific group of contacs and returns the primary email address of all the contacts whithin that group
- * 
- * Due to the appscript limitations (We can only have 100 recipients per email, in the free tier)  every 100 contacts we push `contacts` to `contactsArr`,  Then, we delete the values of `contacts` to start the process again. This allow us to have a two dimensional array with arrays of 100 contacts each.
  * @param groupName - the name of a contact group
  * @returns  an array of email addresses of all the contacts in the specified group
  */
@@ -11,20 +9,32 @@ const getContacts = (groupName: string): string[][] => {
     throw new Error("Este grupo de contactos no existe.")
   }
   const contactsRaw = contactGroup.getContacts();
+  const splitedContacts = splitContacts(contactsRaw)
+  return splitedContacts;
+}
+
+// -------------------------------------------------------------- UTILS --------------------------------------------------------------
+
+/**
+ * splits the list of contact passed as parameter in chunks of 100 each.
+ * 
+ * @description Due to the appscript limitations (We can only have 100 recipients per email, in the free tier)  every 100 contacts we push `contacts` to `contactsArr`, then, we delete the values of `contacts` to start the process again. This allow us to have a two dimensional array with arrays of 100 contacts each.
+ * 
+ * @param contactsList the list of the contacts we want to split.
+ * @returns an array of chunks of 100 contacts each.
+ */
+const splitContacts = (contactsList: GoogleAppsScript.Contacts.Contact[]): string[][] =>{
   const contacts: string[] = []
   const contactsArr: string[][] = []
-
-  contactsRaw.forEach(c => {
+  contactsList.forEach(c => {
     contacts.push(c.getEmails()[0].getAddress())
   })
-
   //split the arr into arr of 100 contacts each 
   while (contacts.length > 0) {
     contactsArr.push(contacts.splice(0, 100))
   }
   return contactsArr;
 }
-
 
 /**
  * search for all the contacts groups (labels) in the account and returns its names
