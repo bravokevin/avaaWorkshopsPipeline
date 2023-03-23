@@ -190,7 +190,7 @@ const getResponses = (responses, individual) => {
  * @param triggerUid the trigger id of the `onFormSubmit `trigger to delete
  */
 const closeForm = (form, triggerUid) => {
-  form.setAcceptingResponses(false);
+  // form.setAcceptingResponses(false);
   form.setCustomClosedFormMessage('Cupos agotados :(');
   const { deleteTrigger, uncompleteTrigger } = getFormIdividualData(triggerUid);
   if (deleteTrigger == undefined) {
@@ -221,6 +221,17 @@ const deleteForm = (e) => {
   deleteTriger(e.triggerUid);
   deleteFile(form.getId());
 };
+
+const updateFormConfirmationMessage = (numberOfRespones, limit) => {
+  const message = `Los cupos para  esta actividad se han agotado.   :(
+
+Quedaste de en la posicion numero ${(numberOfRespones - limit) + 1} en la lista de espera.
+
+Te haremos saber cuando se desocupe un cupo via correo electronico :)
+      `;
+      return message
+
+}
 /**
  *
  * Si un formulario se cierra por que no queadn cupos lo que se hace es que, se deja abierto, pero se le manda a las personas que ya estan inscritas la info para acceder a la reunion.
@@ -259,7 +270,7 @@ const formSubmit = (e) => {
   const numberOfResponses = form.getResponses().length;
   const triggerUid = e.triggerUid;
   const triggerUidString = triggerUid.toString();
-  const { storedMonth, actualSpreadSheet } = getFormData();
+  const { actualSpreadSheet } = getFormData();
   /**
  * This prevents collisions when multiple users are sending a form submision
  * @see {@link https://developers.google.com/apps-script/reference/lock/lock} For reference about look service.
@@ -274,37 +285,31 @@ const formSubmit = (e) => {
     storeFormData(values, triggerUidString);
     form.setCustomClosedFormMessage(triggerUidString);
   }
-  const { workshopName, range, meetUrl, addToCalendarUrl, limit, unfull } = getFormIdividualData(triggerUidString);
+  const { workshopName, range, meetUrl, addToCalendarUrl, limit } = getFormIdividualData(triggerUidString);
+
   const actualSheet = spreadSheetResponse.getSheetByName(workshopName);
   //updates the value of the current number of registrants in the main spreadsheet.
-  const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
-  sheet.getRange(cellForUpdate).setValue(numberOfResponses);
   const resp = getResponses(e.response, true);
+
+  if (numberOfResponses >= limit) {
+    const message = updateFormConfirmationMessage(numberOfResponses, limit)
+    form.setConfirmationMessage(message)
+  }
+  else if (numberOfResponses < limit) {
+    sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl);
+    const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
+    sheet.getRange(cellForUpdate).setValue(numberOfResponses);
+  }
+
   actualSheet.appendRow([numberOfResponses, resp.surnames, resp.names, resp.dni, resp.phoneNumber, resp.email]);
-  const values = getSheetValues(actualSheet);
-  values.push(resp.dni);
-  // callProxyFunction("main", values.toString());
+  // const values = getSheetValues(actualSheet);
+  // values.push(resp.dni);
   SpreadsheetApp.flush();
   // release the lock
   lock.releaseLock();
   //sends the confirmation message for every registrant.
-  //Close the form once the limit have been reached, and send to all registrants the data of the meeting link
-  if (unfull) {
-    sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl);
-  }
-  if (numberOfResponses >= limit) {
-    if (unfull === false) {
-      form.getResponses();
-      const emails = [];
-      const resp = getResponses(form.getResponses(), false);
-      resp.forEach((r) => {
-        emails.push(r);
-      });
-      sendEmailToRegistrants(emails, workshopName, meetUrl, addToCalendarUrl);
-    }
-    closeForm(form, triggerUidString);
-  }
 };
+
 const sendEmailToRegistrants = (resp, workshopName, meetUrl, addToCalendarUrl) => {
   const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
   MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a el taller: ${workshopName}`, message);
@@ -334,25 +339,3 @@ const getSheetValues = (actualSheet) => {
   const workshop = [name, date, hour, speaker, pensum, kindOfWorkshop, platform, year];
   return workshop;
 };
-
-const updateFormOnResponse = (count) =>{
-  form.setCustomClosedFormMessage(`Cupos agotados :(, has quedado en la lista de espera en el numero ${count}. Te haremos sabes cuando se desocupe un cupo. `);
-  const { deleteTrigger, uncompleteTrigger } = getFormIdividualData(triggerUid);
-  if (deleteTrigger == undefined) {
-    form.setCustomClosedFormMessage(`Cupos agotados :(, has quedado en la lista de espera en el numero ${count}. Te haremos sabes cuando se desocupe un cupo.`);
-    deleteTriger(uncompleteTrigger);
-    // deleteTriger(triggerUid);
-    // scriptProperties.deleteProperty(triggerUid);
-    uncompleteTrigger !== undefined ? scriptProperties.deleteProperty(uncompleteTrigger) : "m";
-  }
-  else {
-    const value = {
-      triggerUid: deleteTrigger
-    };
-    deleteForm(value);
-  }
-  deleteFile(form.getId());
-}
-
-
-
