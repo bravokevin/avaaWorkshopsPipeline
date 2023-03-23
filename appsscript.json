@@ -4,21 +4,25 @@
     "enabledAdvancedServices": [
       {
         "userSymbol": "Gmail",
-        "version": "v1",
-        "serviceId": "gmail"
-      },
-      {
-        "userSymbol": "Sheets",
-        "version": "v4",
-        "serviceId": "sheets"
+        "serviceId": "gmail",
+        "version": "v1"
       },
       {
         "userSymbol": "Calendar",
-        "version": "v3",
-        "serviceId": "calendar"
+        "serviceId": "calendar",
+        "version": "v3"
+      },
+      {
+        "userSymbol": "Sheets",
+        "serviceId": "sheets",
+        "version": "v4"
       }
     ]
   },
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "runtimeVersion": "V8",
+  "webapp": {
+    "executeAs": "USER_DEPLOYING",
+    "access": "ANYONE_ANONYMOUS"
+  }
 }
