@@ -106,13 +106,20 @@ const deleteTriger = (triggerUid) => {
  * @param addToCalendarUrl the "add to my calendar" link
  * @returns a confirmation message to send to all the people who registered in the form
  */
-const createEmailConfirmationMessage = (workshopName, meetUrl, addToCalendarUrl) => {
+const createEmailConfirmationMessage = (workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk) => {
   let message;
+
   if (meetUrl == '') {
     message = `Hola!, Este correo confirma tu inscripcion a el taller: 
     ${workshopName}.         
 
-Si gustas, puedes agregar este evento a tu calendario con el siguiente link ${addToCalendarUrl}        `;
+Si gustas, puedes agregar este evento a tu calendario con el siguiente link ${addToCalendarUrl}
+
+si necesitas cancelar el taller, aqui tienes el link: 
+
+https://script.google.com/macros/s/AKfycbxIYEj15hdgPD2zC70lBNQHJ4rZzbPldkdDfdhTvBjaNQZXqAQOFdUiiLEVXEqG746K/exec?sheetUrl=${encodeURIComponent(sheetUrl)}&scholarDNI=${encodeURIComponent(scholarDNI)}&sheetName=${encodeURIComponent(sheetName)}&limit=${encodeURIComponent(limit)}&formLink=${encodeURIComponent(formLInk)}
+
+`;
   }
   else {
     message = `Hola!, Este correo confirma tu inscripcion a el taller: 
@@ -295,8 +302,9 @@ const formSubmit = (e) => {
     const message = updateFormConfirmationMessage(numberOfResponses, limit)
     form.setConfirmationMessage(message)
   }
+  // tener en cuenta los simbolos de dolar, y la formacion del url, tambien tener en cuenta que cambie el como se abre los formulario, ahora en vez de la url se abre con la ID
   else if (numberOfResponses < limit) {
-    sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl);
+    sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl,  spreadSheetResponse.getUrl(), resp.dni, workshopName, limit, form.getId());
     const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
     sheet.getRange(cellForUpdate).setValue(numberOfResponses);
   }
@@ -310,8 +318,9 @@ const formSubmit = (e) => {
   //sends the confirmation message for every registrant.
 };
 
-const sendEmailToRegistrants = (resp, workshopName, meetUrl, addToCalendarUrl) => {
-  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl);
+const sendEmailToRegistrants = (resp, workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk) => {
+  //aqui devemos enviarle el link de la hoja junto con el nombre del sheet. junto al dni 
+  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk);
   MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a el taller: ${workshopName}`, message);
 };
 const callProxyFunction = (functionName, functionArg) => {
