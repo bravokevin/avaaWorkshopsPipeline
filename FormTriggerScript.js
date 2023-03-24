@@ -117,7 +117,7 @@ Si gustas, puedes agregar este evento a tu calendario con el siguiente link ${ad
 
 si necesitas cancelar el taller, aqui tienes el link: 
 
-https://script.google.com/macros/s/AKfycbxIYEj15hdgPD2zC70lBNQHJ4rZzbPldkdDfdhTvBjaNQZXqAQOFdUiiLEVXEqG746K/exec?sheetUrl=${encodeURIComponent(sheetUrl)}&scholarDNI=${encodeURIComponent(scholarDNI)}&sheetName=${encodeURIComponent(sheetName)}&limit=${encodeURIComponent(limit)}&formLink=${encodeURIComponent(formLInk)}
+https://script.google.com/macros/s/AKfycbzirLUqM2Z-Vs6X6lPFlv0v1MTZfCUff0shsRL9eMZ9MVD1dwtVWuxtIK-0MLzH74w/exec?sheetUrl=${encodeURIComponent(sheetUrl)}&scholarDNI=${encodeURIComponent(scholarDNI)}&sheetName=${encodeURIComponent(sheetName)}&limit=${encodeURIComponent(limit)}&formLInk=${encodeURIComponent(formLInk)}
 
 `;
   }
@@ -298,12 +298,12 @@ const formSubmit = (e) => {
   //updates the value of the current number of registrants in the main spreadsheet.
   const resp = getResponses(e.response, true);
 
-  if (numberOfResponses >= limit) {
+  if (numberOfResponses > limit) {
     const message = updateFormConfirmationMessage(numberOfResponses, limit)
     form.setConfirmationMessage(message)
   }
   // tener en cuenta los simbolos de dolar, y la formacion del url, tambien tener en cuenta que cambie el como se abre los formulario, ahora en vez de la url se abre con la ID
-  else if (numberOfResponses < limit) {
+  else if (numberOfResponses <= limit) {
     sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl,  spreadSheetResponse.getUrl(), resp.dni, workshopName, limit, form.getId());
     const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
     sheet.getRange(cellForUpdate).setValue(numberOfResponses);
