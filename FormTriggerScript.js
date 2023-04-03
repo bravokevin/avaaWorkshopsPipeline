@@ -106,20 +106,12 @@ const deleteTriger = (triggerUid) => {
  * @param addToCalendarUrl the "add to my calendar" link
  * @returns a confirmation message to send to all the people who registered in the form
  */
-const createEmailConfirmationMessage = (workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk) => {
+const createEmailConfirmationMessage = (workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk, scholarName) => {
+  const desconfirmationLink = `https://script.google.com/macros/s/AKfycbzZ9oI77XjPiwAvEbzrdRpnR1FHOuZdBsk0N_nRJJboTUtaJ7EJaeZeiChHLqr-fp8/exec?sheetUrl=${encodeURIComponent(sheetUrl)}&scholarDNI=${encodeURIComponent(scholarDNI)}&sheetName=${encodeURIComponent(sheetName)}&limit=${encodeURIComponent(limit)}&formLInk=${encodeURIComponent(formLInk)}&addToCalendarUrl=${encodeURIComponent(addToCalendarUrl)}&scholarName=${encodeURIComponent(scholarName)}`
   let message;
 
   if (meetUrl == '') {
-    message = `Hola!, Este correo confirma tu inscripcion a el taller: 
-    ${workshopName}.         
-
-Si gustas, puedes agregar este evento a tu calendario con el siguiente link ${addToCalendarUrl}
-
-si necesitas cancelar el taller, aqui tienes el link: 
-
-https://script.google.com/macros/s/AKfycbzirLUqM2Z-Vs6X6lPFlv0v1MTZfCUff0shsRL9eMZ9MVD1dwtVWuxtIK-0MLzH74w/exec?sheetUrl=${encodeURIComponent(sheetUrl)}&scholarDNI=${encodeURIComponent(scholarDNI)}&sheetName=${encodeURIComponent(sheetName)}&limit=${encodeURIComponent(limit)}&formLInk=${encodeURIComponent(formLInk)}
-
-`;
+    message = createConfirmationMessage(scholarName, desconfirmationLink, workshopName, addToCalendarUrl);
   }
   else {
     message = `Hola!, Este correo confirma tu inscripcion a el taller: 
@@ -234,9 +226,8 @@ const updateFormConfirmationMessage = (numberOfRespones, limit) => {
 
 Quedaste de en la posicion numero ${(numberOfRespones - limit) + 1} en la lista de espera.
 
-Te haremos saber cuando se desocupe un cupo via correo electronico :)
-      `;
-      return message
+Te haremos saber cuando se desocupe un cupo via correo electronico :)`;
+  return message
 
 }
 /**
@@ -297,31 +288,41 @@ const formSubmit = (e) => {
   const actualSheet = spreadSheetResponse.getSheetByName(workshopName);
   //updates the value of the current number of registrants in the main spreadsheet.
   const resp = getResponses(e.response, true);
+  const scholarNames = resp.names.split(" ")
 
-  if (numberOfResponses > limit) {
+  if (numberOfResponses <= limit) {
+    sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl, spreadSheetResponse.getUrl(), resp.dni, workshopName, limit, form.getId(), scholarNames[0]);
+    const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
+    sheet.getRange(cellForUpdate).setValue(numberOfResponses);
+    if (numberOfResponses == limit) {
+      const message = updateFormConfirmationMessage(numberOfResponses, limit)
+      form.setConfirmationMessage(message)
+    }
+  }
+  else if (numberOfResponses > limit) {
     const message = updateFormConfirmationMessage(numberOfResponses, limit)
     form.setConfirmationMessage(message)
   }
-  // tener en cuenta los simbolos de dolar, y la formacion del url, tambien tener en cuenta que cambie el como se abre los formulario, ahora en vez de la url se abre con la ID
-  else if (numberOfResponses <= limit) {
-    sendEmailToRegistrants(resp.email, workshopName, meetUrl, addToCalendarUrl,  spreadSheetResponse.getUrl(), resp.dni, workshopName, limit, form.getId());
-    const cellForUpdate = COLUMN_FOR_UPDATE_NUMBER_OF_PARTCICIPANTS + range;
-    sheet.getRange(cellForUpdate).setValue(numberOfResponses);
-  }
 
   actualSheet.appendRow([numberOfResponses, resp.surnames, resp.names, resp.dni, resp.phoneNumber, resp.email]);
-  // const values = getSheetValues(actualSheet);
-  // values.push(resp.dni);
   SpreadsheetApp.flush();
   // release the lock
   lock.releaseLock();
-  //sends the confirmation message for every registrant.
 };
 
-const sendEmailToRegistrants = (resp, workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk) => {
-  //aqui devemos enviarle el link de la hoja junto con el nombre del sheet. junto al dni 
-  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk);
-  MailApp.sendEmail(resp.toString(), `Confirmacion de inscripcion a el taller: ${workshopName}`, message);
+const sendEmailToRegistrants = (resp, workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk, name) => {
+  const message = createEmailConfirmationMessage(workshopName, meetUrl, addToCalendarUrl, sheetUrl, scholarDNI, sheetName, limit, formLInk, name);
+  const obj = {
+    to: resp.toString(),
+    fromName: "Kevin Bravo",
+    fromEmail: "bravokevinto@gmail.com",
+    subject: `Confirmacion de inscripcion a el taller: ${workshopName}`,
+    htmlBody: message,
+  };
+  const raw = convert_(obj)
+  const messaget = Gmail.newMessage();
+  messaget.raw = raw;
+  Gmail.Users.Messages.send(messaget, 'me');
 };
 const callProxyFunction = (functionName, functionArg) => {
   var baseURl = "https://script.google.com/macros/s/AKfycbxn4Bl7_a9flsxTeBly9Fm6D1r30owKU-72OcII72xud6NIBmTySETOfABecStMTho7gw/exec";
